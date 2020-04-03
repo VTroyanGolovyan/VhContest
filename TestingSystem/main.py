@@ -8,5 +8,4 @@ tcp_socket.listen(1000)
 
 while True:
     connect = tcp_socket.accept()
-    while True:
-        TestingThread(CONFIG, connect).start()
+    TestingThread(CONFIG, connect).start()
