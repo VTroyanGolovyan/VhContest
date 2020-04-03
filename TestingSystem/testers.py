@@ -1,4 +1,4 @@
-from runners import *
+from runners import CompilerRunner, InterpreterRunner, SomeAverageRunner
 
 
 class Tester:
@@ -54,7 +54,7 @@ class CompilingTester(Tester):
         )
 
 
-class InterpreterTester(Tester):
+class InterpretingTester(Tester):
     def __init__(
             self,
             CONFIG,
@@ -103,7 +103,7 @@ class SomeAverageTester(Tester):
         )
 
     def createRunner(self):
-        return CompilerRunner(
+        return SomeAverageRunner(
             self.runningSettings,
             self.CONFIG['ControllerBinPath'],
             self.CONFIG['TestingDirectory'],

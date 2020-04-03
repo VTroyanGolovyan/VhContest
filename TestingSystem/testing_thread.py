@@ -1,5 +1,20 @@
 from threading import Thread
+from runners import RunningSettings
 from testers import *
+
+languageSettings = dict(
+    [
+        (
+            'c++',
+            RunningSettings(
+                0,
+                'g++ {0} -o Main',
+                '',
+                ''
+            )
+        ),
+    ]
+)
 
 
 class TestingThread(Thread):
