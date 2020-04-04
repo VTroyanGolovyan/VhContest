@@ -33,8 +33,13 @@ export default {
         .then(response => {
           switch (parseInt(response.data.status)) {
             case 0:
+              /* Make it global for all components */
               this.$token = response.data.token
               this.$refreshToken = response.data.refreshToken
+              /* Save to localStorage */
+              localStorage.token =response.data.token;
+              localStorage.refreshToken = response.data.refreshToken;
+              /* Refresh to the tasks list */
               this.$router.push('/TaskList')
               break
             case 1:
@@ -49,6 +54,11 @@ export default {
     }
   },
   mounted () {
+    if (localStorage.token && localStorage.refreshToken) {
+      this.$token = localStorage.token;
+      this.$refreshToken = localStorage.refreshToken;
+      this.$router.push('/TaskList')
+    }
   }
 }
 </script>
@@ -62,6 +72,7 @@ export default {
      padding: 0;
      margin-bottom: 32px;
    }
+
    .signin {
      display: flex;
      flex-direction: column;
