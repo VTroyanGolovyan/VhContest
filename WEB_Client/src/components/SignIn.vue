@@ -1,5 +1,5 @@
 <template>
-  <div class="hello">
+  <div class="signin">
     <div>VHcontest</div>
     <form v-on:submit="sendData">
       <input v-model="email" type="email">
@@ -25,16 +25,22 @@ export default {
   methods: {
     sendData: function () {
       axios
-        .get(this.$baseLink + '/signin', {
+        .post(this.$baseLink + '/sign/in', {
           email: this.email,
           password: this.password
         })
         .then(response => {
-          switch (response.data.status) {
+          switch (parseInt(response.data.status)) {
             case 0:
-              this.$token = response.data.$token
+              this.$token = response.data.token
               this.$refreshToken = response.data.refreshToken
               this.$router.push('/TaskList')
+              break
+            case 1:
+              this.error = 'Wrong email'
+              break
+            case 2:
+              this.error = 'Wrong password'
               break
             default:
           }
@@ -48,18 +54,12 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1, h2 {
-  font-weight: normal;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
+   .signin {
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+     align-items: center;
+     width: 100%;
+     height: 100vh;
+   }
 </style>

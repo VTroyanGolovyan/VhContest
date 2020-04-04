@@ -1,6 +1,19 @@
 <template>
   <div>
-  efe
+    <div v-for="task in tasks" v-bind:key="task">
+      <div>
+        {{ task.name }}
+      </div>
+      <div>
+        {{ task.condition }}
+      </div>
+      <div>
+        TL {{ task.timeLimit }}
+      </div>
+      <div>
+        ML {{ task.memoryLimit }}
+      </div>
+    </div>
   </div>
 </template>
 <script>
@@ -9,13 +22,20 @@ export default {
   name: 'TaskList',
   data () {
     return {
-      email: '',
-      password: ''
+      tasks: []
     }
   },
   methods: {
+    fetchTasks: function () {
+      axios
+        .get(this.$baseLink + '/' + 'task_list')
+        .then(response => {
+          this.tasks = response.data.data
+        })
+    }
   },
   mounted () {
+    this.fetchTasks()
   }
 }
 </script>
