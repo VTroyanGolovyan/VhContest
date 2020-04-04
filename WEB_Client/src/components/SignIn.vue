@@ -54,6 +54,7 @@ export default {
     }
   },
   mounted () {
+    /* checks if we were signed in */
     if (localStorage.token && localStorage.refreshToken) {
       this.$token = localStorage.token;
       this.$refreshToken = localStorage.refreshToken;
