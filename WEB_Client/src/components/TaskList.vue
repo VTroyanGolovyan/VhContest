@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Header></Header>
     <div v-for="task in tasks" v-bind:key="task">
       <div>
         {{ task.name }}
@@ -14,6 +15,7 @@
         ML {{ task.memoryLimit }}
       </div>
     </div>
+    <Footer></Footer>
   </div>
 </template>
 <script>
