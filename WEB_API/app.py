@@ -38,6 +38,7 @@ def archive():
         'status': '0',
         'data': [
             {
+                'id': '1',
                 'name': 'Hello, world',
                 'condition': 'Напишите Hello, world',
                 'timeLimit': '1000',

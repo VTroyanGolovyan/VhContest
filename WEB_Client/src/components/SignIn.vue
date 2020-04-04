@@ -2,8 +2,8 @@
   <div class="signin">
     <h2>VHcontest</h2>
     <form v-on:submit="sendData">
-      <input class="submit-text" v-model="email" type="email">
-      <input class="submit-text" v-model="password" type="password">
+      <input class="submit-text" v-model="email" type="email" placeholder="email">
+      <input class="submit-text" v-model="password" type="password" placeholder="password">
       <input class="submit-input" type="submit" value="Войти">
       <div class="error" v-if="error != ''">
         {{error}}
@@ -37,8 +37,8 @@ export default {
               this.$token = response.data.token
               this.$refreshToken = response.data.refreshToken
               /* Save to localStorage */
-              localStorage.token =response.data.token;
-              localStorage.refreshToken = response.data.refreshToken;
+              localStorage.token = response.data.token
+              localStorage.refreshToken = response.data.refreshToken
               /* Refresh to the tasks list */
               this.$router.push('/TaskList')
               break
@@ -56,8 +56,8 @@ export default {
   mounted () {
     /* checks if we were signed in */
     if (localStorage.token && localStorage.refreshToken) {
-      this.$token = localStorage.token;
-      this.$refreshToken = localStorage.refreshToken;
+      this.$token = localStorage.token
+      this.$refreshToken = localStorage.refreshToken
       this.$router.push('/TaskList')
     }
   }
@@ -90,8 +90,8 @@ export default {
      align-items: center;
      width: 30%;
      padding: 32px;
-      box-shadow: 0 0 5px 1px #b5b5b5;
-      border-radius: 3px;
+     box-shadow: 0 0 5px 1px #b5b5b5;
+     border-radius: 3px;
    }
 
    .signin form input {
@@ -101,6 +101,7 @@ export default {
      font-size: 1rem;
      border: none;
      outline: none;
+     text-align: center;
    }
 
    .signin form .submit-input {

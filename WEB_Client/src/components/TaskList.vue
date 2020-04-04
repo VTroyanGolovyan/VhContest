@@ -1,18 +1,23 @@
 <template>
   <div>
     <Header></Header>
-    <div v-for="task in tasks" v-bind:key="task">
-      <div>
-        {{ task.name }}
-      </div>
-      <div>
-        {{ task.condition }}
-      </div>
-      <div>
-        TL {{ task.timeLimit }}
-      </div>
-      <div>
-        ML {{ task.memoryLimit }}
+    <div>
+      <div v-for="task in tasks" v-bind:key="task.id">
+        <div>
+          {{ task.id }}
+        </div>
+        <div>
+          {{ task.name }}
+        </div>
+        <div>
+          {{ task.condition }}
+        </div>
+        <div>
+          TL {{ task.timeLimit }}
+        </div>
+        <div>
+          ML {{ task.memoryLimit }}
+        </div>
       </div>
     </div>
     <Footer></Footer>
