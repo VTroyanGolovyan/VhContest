@@ -1,18 +1,25 @@
 from flask import Flask
+from flask_cors import CORS, cross_origin
 import json
 
-
 app = Flask(__name__)
+app.config['CORS_HEADERS'] = 'Content-Type'
+CORS(app)
 
 
 @app.route('/')
-def main():
+@cross_origin()
+def home():
     return 'Home route'
 
 
-@app.route('/sign/in')
+@app.route('/sign/in', methods=['POST', 'OPTIONS'])
 def sign_in():
-    return 'Sign in route!'
+    return json.dumps({
+        'status': '0',
+        'token': 'HIUGHIUHUHUIUHUIHS',
+        'refresh_token': 'HIUHUUIHUIHU'
+    })
 
 
 @app.route('/sign/up')
@@ -25,9 +32,19 @@ def sign_out():
     return 'Sign out route!'
 
 
-@app.route('/archive')
+@app.route('/task_list')
 def archive():
-    return 'Tasks archive route'
+    return json.dumps({
+        'status': '0',
+        'data': [
+            {
+                'name': 'Hello, world',
+                'condition': 'Напишите Hello, world',
+                'timeLimit': '1000',
+                'memoryLimit': '128'
+            }
+        ]
+    })
 
 
 @app.route('/task')
@@ -36,10 +53,9 @@ def task():
 
 
 @app.route('/check')
-def task():
+def check():
     return 'Task check!'
 
 
 if __name__ == '__main__':
     app.run()
-
