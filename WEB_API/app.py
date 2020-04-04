@@ -1,14 +1,20 @@
 from flask import Flask
 from flask_cors import CORS, cross_origin
+from flask_sqlalchemy import SQLAlchemy
 import json
 
 app = Flask(__name__)
-app.config['CORS_HEADERS'] = 'Content-Type'
+app.config['CORS_HEADERS'] = 'Content-Type'  # Allow cros domain
 CORS(app)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root@server:3306/VHcontest'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
+from db_models import *
 
 
 @app.route('/')
-@cross_origin()
 def home():
     return 'Home route'
 
@@ -38,12 +44,12 @@ def archive():
         'status': '0',
         'data': [
             {
-                'id': '1',
+                'id': i,
                 'name': 'Hello, world',
                 'condition': 'Напишите Hello, world',
                 'timeLimit': '1000',
                 'memoryLimit': '128'
-            }
+            } for i in range(1, 15)
         ]
     })
 

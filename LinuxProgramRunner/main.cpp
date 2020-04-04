@@ -34,6 +34,7 @@ void execute_programm(int* n, char** args) {
 
 int main(int n, char** args) {
   pid_t p_id = fork();
+  int t = 6;
   if (p_id == 0) {
 	set_limits(&n, args);
 	freopen("input.txt", "a+",  stdin); //stdin file
