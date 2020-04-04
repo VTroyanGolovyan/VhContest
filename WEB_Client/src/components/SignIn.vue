@@ -8,7 +8,7 @@
       <div class="error" v-if="error != ''">
         {{error}}
       </div>
-      <router-link to="home">У меня нет аккаунта, зарегистрироваться</router-link>
+      <router-link to="/SignUp">У меня нет аккаунта, зарегистрироваться</router-link>
     </form>
   </div>
 </template>
