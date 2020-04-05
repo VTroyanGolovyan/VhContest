@@ -7,5 +7,8 @@ tcp_socket.bind((gethostbyname('localhost'), 5555))
 tcp_socket.listen(1000)
 
 while True:
-    connect = tcp_socket.accept()
-    TestingThread(CONFIG, connect).start()
+    try:
+        connect = tcp_socket.accept()  # Get connect with user
+        TestingThread(CONFIG, connect).start()  # Run testing Thread
+    except Exception:
+        print('Something went wrong')

@@ -24,4 +24,37 @@ class TestingThread(Thread):
         self.connect = connect
 
     def run(self):
-        pass
+        sendingID = self.connect.recv(16)
+        sendingData = self.getSendingData(sendingID)
+        tester = self.createTester('c++')
+        tester.runSolutionTesting()
+
+    def getSendingData(self, sendingID):
+        return self.CONFIG
+
+    def createTester(self, language):
+        global languageSettings
+        if languageSettings[language].type == 0:
+            return CompilingTester(
+                self.CONFIG,
+                languageSettings[language],
+                1000,
+                124,
+                1
+            )
+        elif languageSettings[language].type == 1:
+            return InterpretingTester(
+                self.CONFIG,
+                languageSettings[language],
+                1000,
+                124,
+                1
+            )
+        elif languageSettings[language].type == 0:
+            return SomeAverageTester(
+                self.CONFIG,
+                languageSettings[language],
+                1000,
+                124,
+                1
+            )
