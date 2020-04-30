@@ -1,4 +1,5 @@
 from app import db
+import json
 
 
 class User(db.Model):
@@ -12,15 +13,42 @@ class User(db.Model):
     salt = db.Column(db.String(10), unique=False, nullable=False)
 
     def __repr__(self):
-        pass
+        return 'ih'
 
 
 class Task(db.Model):
     __tablename__ = 'tasks'
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(300), unique=False)
+    condition = db.Column(db.Text, unique=False)
+    time_limit = db.Column(db.Integer, unique=False)
+    memory_limit = db.Column(db.Integer, unique=False)
+    process_limit = db.Column(db.Integer, unique=False)
+    test_generator = db.Column(db.Text, unique=False)
+    test_generator_language = db.Column(db.String(20), unique=False)
+    checker = db.Column(db.Text, unique=False)
+    checker_language = db.Column(db.String(20), unique=False)
+    author_solution = db.Column(db.Text, unique=False)
+    author_solution_language = db.Column(db.String(20), unique=False)
 
     def __repr__(self):
-        pass
+        res = {
+            'id': self.id,
+            'condition': self.condition,
+            'time_limit': self.time_limit,
+            'memory_limit': self.memory_limit
+        }
+        return json.dumps(res)
+
+    def __str__(self):
+        res = {
+            'id': self.id,
+            'name': self.name,
+            'condition': self.condition,
+            'time_limit': self.time_limit,
+            'memory_limit': self.memory_limit
+        }
+        return json.dumps(res)
 
 
 class Test(db.Model):
@@ -44,12 +72,16 @@ class TestResult(db.Model):
     def __repr__(self):
         pass
 
+
 class Sending(db.Model):
     __tablename__ = 'sendings'
     id = db.Column(db.Integer, primary_key=True)
-    sending_id = db.Column(db.Integer, unique=False)
-    test_id = db.Column(db.Integer, unique=False)
-    output = db.Column(db.String(20), unique=False)
+    type = db.Column(db.Integer, unique=False)
+    user_id = db.Column(db.Integer, unique=False)
+    task_id = db.Column(db.Integer, unique=False)
+    code = db.Column(db.Text, unique=False)
+    language = db.Column(db.String(100), unique=False)
+    result = db.Column(db.String(20), unique=False)
 
     def __repr__(self):
         pass

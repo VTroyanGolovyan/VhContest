@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import SignIn from '@/components/SignIn'
 import SignUp from '@/components/SignUp'
 import TaskList from '@/components/TaskList'
+import Task from '@/components/Task'
 
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
@@ -28,6 +29,11 @@ export default new Router({
       path: '/TaskList',
       name: 'TaskList',
       component: TaskList
+    },
+    {
+      path: '/Task/:id',
+      name: 'Task',
+      component: Task
     }
   ]
 })

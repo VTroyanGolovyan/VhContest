@@ -16,7 +16,7 @@
           Лимит памяти
         </div>
       </div>
-      <router-link tag="div" v-bind:to="'/Task/'+task.id" class="task-item" v-for="task in tasks" v-bind:key="task.id">
+      <router-link tag="div" :to="{ name: 'Task', params: { id: task.id }}" class="task-item" v-for="task in tasks" :key="task.id">
         <div>
           {{ task.id }}
         </div>
@@ -24,10 +24,10 @@
           {{ task.name }}
         </div>
         <div>
-          {{ task.timeLimit }}ms
+          {{ task.time_limit }}ms
         </div>
         <div>
-          {{ task.memoryLimit }}mb
+          {{ task.memory_limit }}mb
         </div>
       </router-link>
     </section>
