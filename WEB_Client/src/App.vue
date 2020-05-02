@@ -17,9 +17,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
 }
-* {
-  font-family: 'Open Sans', sans-serif;
-}
+
 body {
   padding: 0;
   margin: 0;

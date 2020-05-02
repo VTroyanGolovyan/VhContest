@@ -47,6 +47,7 @@ export default {
       height: 72px;
       width: 60%;
       box-shadow: 0 0 5px 1px #b5b5b5;
+      font-family: 'Open Sans', sans-serif;
     }
 
     .logo {
