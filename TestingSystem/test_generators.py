@@ -15,7 +15,6 @@ class TestGenerator:
         pass
 
 
-
 class CompilingTestGenerator(TestGenerator):
     def __init__(
             self,
