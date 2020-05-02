@@ -1,7 +1,8 @@
-from flask import Flask, request, redirect, send_from_directory
-from flask_cors import CORS, cross_origin
+from flask import Flask, request
+from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-import json
+
+from check_solution_adapter import CheckAdapter
 
 app = Flask(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'  # Allow cros domain
@@ -54,18 +55,31 @@ def archive():
 
 
 @app.route('/task/<id>', methods=['GET', 'OPTIONS'])
-def task(id=None):
-    print(id)
-    return 'Hello World!'
+def task(id):
+    task = Task.query.get(id)
+    print(task)
+    return json.dumps({
+        'status': '0',
+        'data': json.loads(str(task))
+    })
 
 
 @app.route('/check', methods=['POST', 'OPTIONS'])
 def check():
     if request.method == 'POST':
         data = json.loads(request.data)
-        print(data)
-        db.session.add(Sending(type=1, user_id=1, task_id=1, code=data['solution'], language='python', result='P'))
+        sending = Sending(
+            type=1,
+            user_id=1,
+            task_id=1,
+            code=data['solution'],
+            language='python',
+            result='P'
+        )
+        db.session.add(sending)
         db.session.commit()
+        check = CheckAdapter('localhost', 6666)
+        print(check.say_server(1, sending.id))
         return 'Task check!'
     else:
         return ''
