@@ -43,7 +43,7 @@ def sign_out():
     return ''
 
 
-@app.route('/task_list')
+@app.route('/task_list', methods=['GET', 'OPTIONS'])
 def archive():
     tasks = db.session.query(Task).all()
     for task in tasks:
