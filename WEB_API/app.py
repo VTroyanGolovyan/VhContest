@@ -35,17 +35,17 @@ def sign_in():
 
 @app.route('/sign/up')
 def sign_up():
-    return 'Sign up route!'
+    return ''
 
 
 @app.route('/sign/out')
 def sign_out():
-    return 'Sign out route!'
+    return ''
 
 
 @app.route('/task_list')
 def archive():
-    tasks = Task.query.all()
+    tasks = db.session.query(Task).all()
     for task in tasks:
         print(str(task))
     return json.dumps({
@@ -56,8 +56,7 @@ def archive():
 
 @app.route('/task/<id>', methods=['GET', 'OPTIONS'])
 def task(id):
-    task = Task.query.get(id)
-    print(task)
+    task = db.session.query(Task).get(id)
     return json.dumps({
         'status': '0',
         'data': json.loads(str(task))
@@ -68,21 +67,34 @@ def task(id):
 def check():
     if request.method == 'POST':
         data = json.loads(request.data)
+        print(data['task_id'])
         sending = Sending(
             type=1,
             user_id=1,
-            task_id=1,
+            task_id=data['task_id'],
             code=data['solution'],
             language='python',
-            result='P'
+            result='P',
+            time=0,
+            memory=0
         )
         db.session.add(sending)
         db.session.commit()
         check = CheckAdapter('localhost', 6666)
-        print(check.say_server(1, sending.id))
-        return 'Task check!'
+        check.say_server(1, sending.id)
+        return ''
     else:
         return ''
+
+
+@app.route('/attempts/<id>', methods=['GET', 'OPTIONS'])
+def attempts(id):
+    attempts = db.session.query(Sending).filter_by(task_id=id).all()
+    db.session.close()
+    return json.dumps({
+        'status': '0',
+        'data': [json.loads(str(attempt)) for attempt in attempts]
+    })
 
 
 if __name__ == '__main__':

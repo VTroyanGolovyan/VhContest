@@ -82,6 +82,27 @@ class Sending(db.Model):
     code = db.Column(db.Text, unique=False)
     language = db.Column(db.String(100), unique=False)
     result = db.Column(db.String(20), unique=False)
+    time = db.Column(db.Integer, unique=False)
+    memory = db.Column(db.Integer, unique=False)
 
     def __repr__(self):
-        pass
+        res = {
+            'id': self.id,
+            'task_id': self.task_id,
+            'user_id': self.user_id,
+            'result': self.result,
+            'time': self.time,
+            'memory': self.memory
+        }
+        return json.dumps(res)
+
+    def __str__(self):
+        res = {
+            'id': self.id,
+            'task_id': self.task_id,
+            'user_id': self.user_id,
+            'result': self.result,
+            'time': self.time,
+            'memory': self.memory
+        }
+        return json.dumps(res)
