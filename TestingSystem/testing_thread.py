@@ -34,7 +34,6 @@ class TestingThread(Thread):
 
     def run(self):
         sending = self.connect.recv(256).decode('utf-8')
-        print(sending)
         sendingArray = sending.split(' ')
         sendingId = sendingArray[2]
         userId = sendingArray[1]
@@ -43,26 +42,53 @@ class TestingThread(Thread):
         tester = self.createTester('python')
         testingPath = self.CONFIG['ControllerBinPath'] + '/TestingDirectory/1/'
         sourceFile = testingPath + 'main.py'
+
         f = open(sourceFile, 'w')
         f.write(sendingData[4])
         f.close()
-        for test in self.getTests(sendingData[1]):
-            print(test)
-        tester.runSolutionTesting()
+        res = 'OK'
+
+        timeout, memLimit = self.getLimits(sendingData[3])
+        maxTime = 0
+        maxMem = 0
+        for test in self.getTests(sendingData[3]):
+            res = tester.runSolutionTesting(testingPath, sourceFile, test, timeout, memLimit)
+            maxTime = max(maxTime, res[2])
+            maxMem = max(maxMem, res[1])
+            if res[0] != 'OK':
+                break
+        self.saveResults(sendingId, res, maxTime * 1000, maxMem)
+        self.db.close()
 
     def getSendingData(self, sendingId):
         with self.db as db:
-
             db.execute("SELECT * FROM `sendings` WHERE `id`={0}".format(sendingId))
-
             rows = db.fetchall()
             return rows[0]
 
+    def saveResults(self, sendingId, result, maxTime, maxMem):
+        with self.db as db:
+            db.execute(
+                "UPDATE `sendings` SET `result`='{1}', `time`='{2}', `memory`='{3}'  WHERE `id`={0}".format(
+                    sendingId,
+                    result[0],
+                    maxTime,
+                    maxMem
+                )
+            )
+        self.db.commit()
+
     def getTests(self, taskId):
         with self.db as db:
-            db.execute("SELECT * FROM `tests` WHERE `task_id`={0}".format(sendingID))
+            db.execute("SELECT * FROM `tests` WHERE `task_id`={0}".format(taskId))
             return db.fetchall()
 
+    def getLimits(self, taskId):
+        with self.db as db:
+            db.execute("SELECT * FROM `tasks` WHERE `id`={0}".format(taskId))
+            res = db.fetchall()[0]
+
+            return int(res[3]) // 1000, int(res[4])
 
     def createTester(self, language):
         global languageSettings

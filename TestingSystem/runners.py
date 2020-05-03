@@ -1,4 +1,13 @@
 import subprocess
+import resource
+from process_monitor import ProcessMonitor
+
+
+def preexecCallback(time, memory, childs):
+    def limiter():
+        resource.setrlimit(resource.RLIMIT_CPU, (time, time))
+        resource.setrlimit(resource.RLIMIT_NPROC, (childs, childs))
+    return limiter
 
 
 class RunningSettings:
@@ -20,16 +29,12 @@ class BaseRunner:
             self,
             runningSettings,
             controllerBinPath,
-            runningPath,
-            sourceFile,
             timeLimit,
             memoryLimit,
             processLimit
     ):
         self.settings = runningSettings
         self.controllerBash = controllerBinPath
-        self.runningPath = runningPath
-        self.sourceFile = sourceFile
         self.timeLimit = timeLimit
         self.memoryLimit = memoryLimit
         self.processLimit = processLimit
@@ -37,7 +42,7 @@ class BaseRunner:
     def checkSyntax(self):
         raise Exception('Check syntax method doesn\'t implemented')
 
-    def runProgram(self):
+    def runProgram(self, path, stdin, timeout, memory):
         raise Exception('Run program doesn\'t implemented')
 
     def setInput(self, inputString):
@@ -61,8 +66,6 @@ class CompilerRunner(BaseRunner):
             self,
             runningSettings,
             controllerBinPath,
-            runningPath,
-            sourceFile,
             timeLimit,
             memoryLimit,
             processLimit
@@ -71,19 +74,15 @@ class CompilerRunner(BaseRunner):
             self,
             runningSettings,
             controllerBinPath,
-            runningPath,
-            sourceFile,
             timeLimit,
             memoryLimit,
             processLimit
         )
 
     def checkSyntax(self):
-        bashCommand = self.settings.checkSyntaxBash + ' ' + self.runningPath + '/' + self.sourceFile
-        process = subprocess.Popen(bashCommand, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        output, error = process.communicate()
+        pass
 
-    def runProgram(self):
+    def runProgram(self, path, stdin, timeout, memory):
         pass
 
 
@@ -92,8 +91,6 @@ class InterpreterRunner(BaseRunner):
             self,
             runningSettings,
             controllerBinPath,
-            runningPath,
-            sourceFile,
             timeLimit,
             memoryLimit,
             processLimit
@@ -102,20 +99,41 @@ class InterpreterRunner(BaseRunner):
             self,
             runningSettings,
             controllerBinPath,
-            runningPath,
-            sourceFile,
             timeLimit,
             memoryLimit,
             processLimit
         )
 
     def checkSyntax(self):
-        bashCommand = self.settings.checkSyntaxBash + ' ' + self.runningPath + '/' + self.sourceFile
-        process = subprocess.Popen(bashCommand, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        output, error = process.communicate()
-
-    def runProgram(self):
         pass
+
+    def runProgram(self, path, test_stdin, timeout, memory):
+        bashCommand = self.settings.interpreterBash.format(path)
+        process = subprocess.Popen(
+            bashCommand,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            shell=True,
+            executable='/bin/bash',
+            preexec_fn=preexecCallback(timeout * 2, 1, 0)
+        )
+        monitor = ProcessMonitor(process)
+        monitor.start()
+        process.stdin.write(test_stdin.encode('utf-8'))
+        try:
+            output, error = process.communicate(timeout= timeout + 0.1)
+            if memory < monitor.rss // 1024 // 1024:
+                return output, error, 'ML', monitor.rss, monitor.cpu
+            if error.decode('utf-8') != '':
+                return output, error, 'RE', monitor.rss, monitor.cpu
+            return output, error, 'NL', monitor.rss, monitor.cpu
+        except subprocess.TimeoutExpired:
+            process.kill()
+            output, error = process.communicate()
+            return output, error, 'TL', monitor.rss, monitor.cpu
+        except Exception:
+            return '', '', 'RE', monitor.rss, monitor.cpu
 
 
 class SomeAverageRunner(BaseRunner):
@@ -123,8 +141,6 @@ class SomeAverageRunner(BaseRunner):
             self,
             runningSettings,
             controllerBinPath,
-            runningPath,
-            sourceFile,
             timeLimit,
             memoryLimit,
             processLimit
@@ -133,17 +149,13 @@ class SomeAverageRunner(BaseRunner):
             self,
             runningSettings,
             controllerBinPath,
-            runningPath,
-            sourceFile,
             timeLimit,
             memoryLimit,
             processLimit
         )
 
     def checkSyntax(self):
-        bashCommand = self.settings.checkSyntaxBash + ' ' + self.runningPath + '/' + self.sourceFile
-        process = subprocess.Popen(bashCommand, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        output, error = process.communicate()
+        pass
 
-    def runProgram(self):
+    def runProgram(self, path, stdin, timeout, memory):
         pass
