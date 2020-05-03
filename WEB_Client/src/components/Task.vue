@@ -11,7 +11,7 @@
             Время: {{task.time_limit}}ms
           </div>
           <div class="limit">
-            Память: {{task.time_limit}}M
+            Память: {{task.memory_limit}}M
           </div>
         </div>
         <div class="condition">
@@ -37,6 +37,40 @@
             <input type="submit" value="Отправить решение">
           </div>
         </form>
+      </div>
+      <div class="header">
+        <h2 v-if="attempts.length > 0">
+           Попытки
+        </h2>
+        <h2 v-if="attempts.length === 0">
+           Не было попыток
+        </h2>
+      </div>
+      <div v-if="attempts.length > 0" class="attempts">
+        <div class="attemts-top">
+          <div>
+            Id
+          </div>
+          <div>
+            Время
+          </div>
+          <div>
+            Память
+          </div>
+          <div>
+            Результат
+          </div>
+        </div>
+        <div class="attempt" v-for="attempt in attempts" v-bind:key="attempt.id">
+          <div>{{attempt.id}}</div>
+          <div>
+            {{attempt.time}}ms
+          </div>
+          <div>
+            {{attempt.memory}}mb
+          </div>
+          <div>{{attempt.result}}</div>
+        </div>
       </div>
     </section>
     <Footer></Footer>
@@ -66,17 +100,25 @@ export default {
         memory_limit: '',
         time_limit: ''
       },
+      attempts: [],
       solution: '',
       language: 'python',
       theme: '1'
     }
   },
   methods: {
-    fetchTasks: function () {
+    fetchTask: function () {
       axios
         .get(this.$baseLink + '/' + 'task/' + this.$route.params.id)
         .then(response => {
           this.task = response.data.data
+        })
+    },
+    fetchAttempts: function () {
+      axios
+        .get(this.$baseLink + '/' + 'attempts/' + this.$route.params.id)
+        .then(response => {
+          this.attempts = response.data.data.reverse()
         })
     },
     changeTheme: function () {
@@ -98,28 +140,19 @@ export default {
     submitSolution: function () {
       axios
         .post(this.$baseLink + '/check', {
-          id: this.$route.params.id,
+          task_id: this.$route.params.id,
           solution: this.solution
         })
-        .then(response => {
-          switch (parseInt(response.data.status)) {
-            case 0:
-              this.$router.push('/TaskList')
-              break
-            case 1:
-              this.$router.push('/TaskList')
-              break
-            default:
-          }
-        })
+        .then(response => {})
     }
   },
   mounted () {
-    this.fetchTasks()
+    this.fetchTask()
+    this.fetchAttempts()
     editor = ace.edit('editor')
     editor.setFontSize('16px')
     editor.setTheme('ace/theme/monokai')
-    editor.getSession().setMode('ace/mode/javascript')
+    editor.getSession().setMode('ace/mode/python')
     editor.getSession().on('change', () => {
       this.solution = editor.getSession().getValue()
     })
@@ -137,7 +170,9 @@ export default {
     width: 60%;
     padding: 32px 20%;
   }
-
+  .task-form {
+    margin-bottom: 16px;
+  }
   .task-form, .task-form form {
     display: flex;
     flex-direction: column;
@@ -221,5 +256,45 @@ export default {
        right: 0;
        width: 100%;
        height: 100%;
+   }
+   .header {
+     display: flex;
+     flex-direction: row;
+     justify-content: center;
+     width: 100%;
+     font-family: 'Open Sans', sans-serif;
+     margin-bottom: 8px;
+   }
+   .attemts-top {
+     cursor: pointer;
+     width: calc(100% - 32px);
+     display: flex;
+     flex-direction: row;
+     justify-content: space-around;
+     padding: 16px 16px;
+     background: white;
+     box-shadow: 0 0 5px 1px #b5b5b5;
+     border-radius: 4px;
+   }
+   .attempts {
+     font-family: 'Open Sans', sans-serif;
+     display: flex;
+     flex-direction: column;
+     justify-content: flex-start;
+     align-items: center;
+     width: 100%;
+
+   }
+   .attempt {
+     cursor: pointer;
+     border-bottom: solid 1px #b5b5b5;
+     width: calc(100% - 32px);
+     display: flex;
+     flex-direction: row;
+     justify-content: space-around;
+     padding: 16px 16px;
+   }
+   .attempt div, .attemts-top div {
+      width: 20%;
    }
 </style>

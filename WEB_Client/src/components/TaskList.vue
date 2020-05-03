@@ -67,6 +67,7 @@ export default {
     align-items: center;
     width: 60%;
     padding: 32px 20%;
+    font-family: 'Open Sans', sans-serif;
   }
 
   .task-item, .task-list-header {

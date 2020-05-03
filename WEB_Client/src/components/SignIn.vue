@@ -68,10 +68,11 @@ export default {
 <style scoped>
    h2 {
      color: #a61111;
-     font-size: 3rem;
+     font-size: 2.5rem;
      margin: 0;
      padding: 0;
      margin-bottom: 32px;
+     font-family: 'Open Sans', sans-serif;
    }
 
    .signin {
