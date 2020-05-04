@@ -125,4 +125,8 @@ export default {
      background: white;
      color: #a61111;
    }
+
+   a {
+     font-family: 'Open Sans', sans-serif;
+   }
 </style>
