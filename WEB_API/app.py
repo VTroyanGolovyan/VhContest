@@ -5,10 +5,11 @@ from flask_sqlalchemy import SQLAlchemy
 from check_solution_adapter import CheckAdapter
 
 app = Flask(__name__)
-app.config['CORS_HEADERS'] = 'Content-Type'  # Allow cros domain
+# Allow cross domain
+app.config['CORS_HEADERS'] = 'Content-Type'
 CORS(app)
-
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root@localhost:3306/VHcontest'
+db_url = 'mysql://root:root@localhost:3306/VHcontest'
+app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -17,7 +18,9 @@ from db_models import *
 
 @app.route('/')
 def home():
-    return 'Home route'
+    return json.dumps({
+            'status': '0'
+    })
 
 
 @app.route('/sign/in', methods=['POST', 'OPTIONS'])
@@ -44,7 +47,7 @@ def sign_out():
 
 
 @app.route('/task_list', methods=['GET', 'OPTIONS'])
-def archive():
+def task_list():
     tasks = db.session.query(Task).all()
     for task in tasks:
         print(str(task))
@@ -80,6 +83,7 @@ def check():
         )
         db.session.add(sending)
         db.session.commit()
+        # send info to testing server
         check = CheckAdapter('localhost', 6666)
         check.say_server(1, sending.id)
         return ''
