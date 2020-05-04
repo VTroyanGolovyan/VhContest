@@ -40,7 +40,7 @@ class TestingThread(Thread):
         sendingData = self.getSendingData(sendingId)
 
         tester = self.createTester('python')
-        testingPath = self.CONFIG['ControllerBinPath'] + '/TestingDirectory/1/'
+        testingPath = self.CONFIG['TestingDirectory'] + '1/'
         sourceFile = testingPath + 'main.py'
 
         f = open(sourceFile, 'w')

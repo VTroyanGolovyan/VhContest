@@ -156,6 +156,9 @@ export default {
     editor.getSession().on('change', () => {
       this.solution = editor.getSession().getValue()
     })
+    setInterval(() => {
+      this.fetchAttempts()
+    }, 1000)
   }
 }
 </script>

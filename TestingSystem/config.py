@@ -1,5 +1,5 @@
 CONFIG = {
-    "TestingDirectory": "123",
+    "TestingDirectory": "/home/vh/VHcontest/TestingSystem/TestingDirectory/",
     "ControllerBinPath": "/home/vh/VHcontest/LinuxProgramRunner",
     "DBHost": "localhost",
     "DBName": "VHcontest",
