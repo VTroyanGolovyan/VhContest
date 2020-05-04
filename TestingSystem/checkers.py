@@ -31,8 +31,6 @@ class CompilingChecker(Checker):
         return CompilerRunner(
             self.runningSettings,
             self.CONFIG['ControllerBinPath'],
-            self.CONFIG['TestingDirectory'],
-            self.sourceName,
             -1,
             -1,
             -1
@@ -55,8 +53,6 @@ class InterpretingChecker(Checker):
         return InterpreterRunner(
             self.runningSettings,
             self.CONFIG['ControllerBinPath'],
-            self.CONFIG['TestingDirectory'],
-            self.sourceName,
             -1,
             -1,
             -1
@@ -79,8 +75,6 @@ class SomeAverageChecker(Checker):
         return SomeAverageRunner(
             self.runningSettings,
             self.CONFIG['ControllerBinPath'],
-            self.CONFIG['TestingDirectory'],
-            self.sourceName,
             -1,
             -1,
             -1

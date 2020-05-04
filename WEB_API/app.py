@@ -29,8 +29,8 @@ def sign_in():
         print(request.data)
         return json.dumps({
             'status': '0',
-            'token': 'HIUGHIUHUHUIUHUIHS',
-            'refresh_token': 'HIUHUUIHUIHU'
+            'token': 'test',
+            'refresh_token': 'test'
         })
     else:
         return ''
@@ -49,8 +49,6 @@ def sign_out():
 @app.route('/task_list', methods=['GET', 'OPTIONS'])
 def task_list():
     tasks = db.session.query(Task).all()
-    for task in tasks:
-        print(str(task))
     return json.dumps({
         'status': '0',
         'data': [json.loads(str(t)) for t in tasks]
@@ -70,7 +68,6 @@ def task(id):
 def check():
     if request.method == 'POST':
         data = json.loads(request.data)
-        print(data['task_id'])
         sending = Sending(
             type=1,
             user_id=1,
