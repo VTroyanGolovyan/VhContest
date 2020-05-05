@@ -21,6 +21,10 @@ class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(300), unique=False)
     condition = db.Column(db.Text, unique=False)
+    input_example = db.Column(db.Text, unique=False)
+    output_example = db.Column(db.Text, unique=False)
+    input_description = db.Column(db.Text, unique=False)
+    output_description = db.Column(db.Text, unique=False)
     time_limit = db.Column(db.Integer, unique=False)
     memory_limit = db.Column(db.Integer, unique=False)
     process_limit = db.Column(db.Integer, unique=False)
@@ -31,24 +35,25 @@ class Task(db.Model):
     author_solution = db.Column(db.Text, unique=False)
     author_solution_language = db.Column(db.String(20), unique=False)
 
-    def __repr__(self):
-        res = {
-            'id': self.id,
-            'condition': self.condition,
-            'time_limit': self.time_limit,
-            'memory_limit': self.memory_limit
-        }
-        return json.dumps(res)
-
-    def __str__(self):
+    def get_dict(self):
         res = {
             'id': self.id,
             'name': self.name,
             'condition': self.condition,
+            'input_example': self.input_example,
+            'output_example': self.output_example,
+            'input_description': self.input_description,
+            'output_description': self.output_description,
             'time_limit': self.time_limit,
             'memory_limit': self.memory_limit
         }
-        return json.dumps(res)
+        return res
+
+    def __repr__(self):
+        return json.dumps(self.get_dict())
+
+    def __str__(self):
+        return json.dumps(self.get_dict())
 
 
 class Test(db.Model):
@@ -90,6 +95,7 @@ class Sending(db.Model):
             'id': self.id,
             'task_id': self.task_id,
             'user_id': self.user_id,
+            'language': self.language,
             'result': self.result,
             'time': self.time,
             'memory': self.memory
@@ -101,6 +107,7 @@ class Sending(db.Model):
             'id': self.id,
             'task_id': self.task_id,
             'user_id': self.user_id,
+            'language': self.language,
             'result': self.result,
             'time': self.time,
             'memory': self.memory

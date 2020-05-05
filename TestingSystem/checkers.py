@@ -29,11 +29,7 @@ class CompilingChecker(Checker):
 
     def createRunner(self):
         return CompilerRunner(
-            self.runningSettings,
-            self.CONFIG['ControllerBinPath'],
-            -1,
-            -1,
-            -1
+            self.runningSettings
         )
 
 
@@ -51,11 +47,7 @@ class InterpretingChecker(Checker):
 
     def createRunner(self):
         return InterpreterRunner(
-            self.runningSettings,
-            self.CONFIG['ControllerBinPath'],
-            -1,
-            -1,
-            -1
+            self.runningSettings
         )
 
 
@@ -73,9 +65,5 @@ class SomeAverageChecker(Checker):
 
     def createRunner(self):
         return SomeAverageRunner(
-            self.runningSettings,
-            self.CONFIG['ControllerBinPath'],
-            -1,
-            -1,
-            -1
+            self.runningSettings
         )

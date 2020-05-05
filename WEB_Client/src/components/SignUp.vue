@@ -9,6 +9,10 @@
       <input class="submit-text" v-model="email" type="email" placeholder="Почта">
       <input class="submit-text" v-model="password" type="password" placeholder="Пароль">
       <input class="submit-text" v-model="checkPassword" type="password" placeholder="Повторите пароль">
+      <label>
+        Соглашаюсь поставить Владу отл. 10
+        <input type="checkbox">
+      </label>
       <input class="submit-input" type="submit" value="Зарегистрироваться">
       <div class="error" v-if="error != ''">
         {{error}}

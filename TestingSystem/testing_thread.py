@@ -2,20 +2,44 @@ from threading import Thread
 from runners import RunningSettings
 from testers import *
 import pymysql
+import subprocess
 
+# {0} - directory, {1} - path
 languageSettings = {
-
     'c++': RunningSettings(
         0,
-        'g++ {0} -o Main',
+        'g++ {1} -o {0}Main',
+        'cd {0}; ./Main',
         '',
-        ''
+        'cpp'
     ),
     'python': RunningSettings(
         1,
         '',
-        'python3 {0}',
-        ''
+        'python3 {1}',
+        '',
+        'py'
+    ),
+    'javascript': RunningSettings(
+        1,
+        '',
+        'node {1}',
+        '',
+        'js'
+    ),
+    'php': RunningSettings(
+        1,
+        '',
+        'php {1}',
+        '',
+        'php'
+    ),
+    'java': RunningSettings(
+        2,
+        'cd {0}; javac Main.java',
+        'cd {0}; java Main',
+        '',
+        'java'
     )
 }
 
@@ -37,20 +61,42 @@ class TestingThread(Thread):
         sendingArray = sending.split(' ')
         sendingId = sendingArray[2]
         userId = sendingArray[1]
+
         sendingData = self.getSendingData(sendingId)
 
-        tester = self.createTester('python')
+        language = sendingData[5]
+
         testingPath = self.CONFIG['TestingDirectory'] + '1/'
-        sourceFile = testingPath + 'main.py'
+        sourceFile = testingPath + 'Main.' + languageSettings[language].fileEnd
+        print(languageSettings[language].runningType)
 
         f = open(sourceFile, 'w')
         f.write(sendingData[4])
         f.close()
+
+        if languageSettings[language].runningType in [0, 2]:
+            print(languageSettings[language].compilerBash.format(testingPath, sourceFile))
+            process = subprocess.Popen(
+                languageSettings[language].compilerBash.format(testingPath, sourceFile),
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                shell=True,
+                executable='/bin/bash'
+            )
+            output, error = process.communicate()
+            print(output.decode('utf-8'), error.decode('utf-8'))
+            if error.decode('utf-8') != '':
+                self.saveResults(sendingId, 'CE', 0, 0)
+                self.db.close()
+                return
+
         res = 'OK'
 
         timeout, memLimit = self.getLimits(sendingData[3])
         maxTime = 0
         maxMem = 0
+        tester = self.createTester(language)
         for test in self.getTests(sendingData[3]):
             res = tester.runSolutionTesting(testingPath, sourceFile, test, timeout, memLimit)
             maxTime = max(maxTime, res[2])
@@ -87,32 +133,22 @@ class TestingThread(Thread):
         with self.db as db:
             db.execute("SELECT * FROM `tasks` WHERE `id`={0}".format(taskId))
             res = db.fetchall()[0]
-
-            return int(res[3]) // 1000, int(res[4])
+            return int(res[7]) // 1000, int(res[8])
 
     def createTester(self, language):
         global languageSettings
         if languageSettings[language].runningType == 0:
             return CompilingTester(
                 self.CONFIG,
-                languageSettings[language],
-                1000,
-                124,
-                1
+                languageSettings[language]
             )
         elif languageSettings[language].runningType == 1:
             return InterpretingTester(
                 self.CONFIG,
-                languageSettings[language],
-                1000,
-                124,
-                1
+                languageSettings[language]
             )
-        elif languageSettings[language].runningType == 0:
+        elif languageSettings[language].runningType == 2:
             return SomeAverageTester(
                 self.CONFIG,
-                languageSettings[language],
-                1000,
-                124,
-                1
+                languageSettings[language]
             )

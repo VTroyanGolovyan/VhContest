@@ -68,12 +68,13 @@ def task(id):
 def check():
     if request.method == 'POST':
         data = json.loads(request.data)
+        print(data)
         sending = Sending(
             type=1,
             user_id=1,
             task_id=data['task_id'],
             code=data['solution'],
-            language='python',
+            language=data['language'],
             result='P',
             time=0,
             memory=0

@@ -5,16 +5,10 @@ class Tester:
     def __init__(
             self,
             CONFIG,
-            runningSettings,
-            timeLimit,
-            memoryLimit,
-            processLimit
+            runningSettings
     ):
         self.CONFIG = CONFIG
         self.runningSettings = runningSettings
-        self.timeLimit = timeLimit
-        self.memoryLimit = memoryLimit
-        self.processLimit = processLimit
         self.runner = self.createRunner()
 
     def runSolutionTesting(
@@ -26,6 +20,7 @@ class Tester:
             memory
     ):
         result = self.runner.runProgram(
+            testingPath,
             sourceFile,
             test[2],
             timout,
@@ -50,26 +45,16 @@ class CompilingTester(Tester):
             self,
             CONFIG,
             runningSettings,
-            timeLimit,
-            memoryLimit,
-            processLimit
     ):
         Tester.__init__(
             self,
             CONFIG,
             runningSettings,
-            timeLimit,
-            memoryLimit,
-            processLimit
         )
 
     def createRunner(self):
         return CompilerRunner(
-            self.runningSettings,
-            self.CONFIG['ControllerBinPath'],
-            self.timeLimit,
-            self.memoryLimit,
-            self.processLimit
+            self.runningSettings
         )
 
 
@@ -77,27 +62,17 @@ class InterpretingTester(Tester):
     def __init__(
             self,
             CONFIG,
-            runningSettings,
-            timeLimit,
-            memoryLimit,
-            processLimit
+            runningSettings
     ):
         Tester.__init__(
             self,
             CONFIG,
             runningSettings,
-            timeLimit,
-            memoryLimit,
-            processLimit
         )
 
     def createRunner(self):
         return InterpreterRunner(
-            self.runningSettings,
-            self.CONFIG['ControllerBinPath'],
-            self.timeLimit,
-            self.memoryLimit,
-            self.processLimit
+            self.runningSettings
         )
 
 
@@ -105,25 +80,15 @@ class SomeAverageTester(Tester):
     def __init__(
             self,
             CONFIG,
-            runningSettings,
-            timeLimit,
-            memoryLimit,
-            processLimit
+            runningSettings
     ):
         Tester.__init__(
             self,
             CONFIG,
-            runningSettings,
-            timeLimit,
-            memoryLimit,
-            processLimit
+            runningSettings
         )
 
     def createRunner(self):
         return SomeAverageRunner(
-            self.runningSettings,
-            self.CONFIG['ControllerBinPath'],
-            self.timeLimit,
-            self.memoryLimit,
-            self.processLimit
+            self.runningSettings
         )

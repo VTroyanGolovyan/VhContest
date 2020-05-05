@@ -8,14 +8,42 @@
         </h2>
         <div class="limits">
           <div class="limit">
-            Время: {{task.time_limit}}ms
+            Время: {{ task.time_limit }}ms
           </div>
           <div class="limit">
-            Память: {{task.memory_limit}}M
+            Память: {{ task.memory_limit }}M
           </div>
         </div>
         <div class="condition">
           {{task.condition}}
+        </div>
+        <div class="examples">
+          <div class="example">
+            <h2>
+               Входные данные
+            </h2>
+            <textarea v-model="task.input_description" readonly></textarea>
+          </div>
+          <div class="example">
+            <h2>
+               Выходные данные
+            </h2>
+            <textarea v-model="task.output_description" readonly></textarea>
+          </div>
+        </div>
+        <div class="examples">
+          <div class="example">
+            <h2>
+               Пример ввода
+            </h2>
+            <textarea v-model="task.input_example" readonly></textarea>
+          </div>
+          <div class="example">
+            <h2>
+               Пример вывода
+            </h2>
+            <textarea v-model="task.output_example" readonly></textarea>
+          </div>
         </div>
       </div>
       <div class="task-form">
@@ -25,15 +53,21 @@
             </div>
           </div>
           <div class="form-bottom">
-            <select v-on:change="changeTheme" v-model="theme">
-              <option value="1">Темная тема</option>
-              <option value="2">Светлая тема</option>
-            </select>
-            <select v-on:change="changeLanguage" v-model="language">
-              <option>python</option>
-              <option>javascript</option>
-              <option>c++</option>
-            </select>
+            <label class="select-wrapper">
+              <select v-on:change="changeTheme" v-model="theme">
+                <option value="1">Темная тема</option>
+                <option value="2">Светлая тема</option>
+              </select>
+            </label>
+            <label class="select-wrapper">
+              <select v-on:change="changeLanguage" v-model="language">
+                <option>python</option>
+                <option>javascript</option>
+                <option>c++</option>
+                <option>php</option>
+                <option>java</option>
+              </select>
+            </label>
             <input type="submit" value="Отправить решение">
           </div>
         </form>
@@ -52,6 +86,9 @@
             Id
           </div>
           <div>
+            Язык
+          </div>
+          <div>
             Время
           </div>
           <div>
@@ -63,6 +100,9 @@
         </div>
         <div class="attempt" v-for="attempt in attempts" v-bind:key="attempt.id">
           <div>{{attempt.id}}</div>
+          <div>
+            {{attempt.language}}
+          </div>
           <div>
             {{attempt.time}}ms
           </div>
@@ -141,6 +181,7 @@ export default {
       axios
         .post(this.$baseLink + '/check', {
           task_id: this.$route.params.id,
+          language: this.language,
           solution: this.solution
         })
         .then(response => {})
@@ -187,11 +228,6 @@ export default {
     width: 100%;
   }
 
-  textarea {
-    display: none;
-
-  }
-
   .form-bottom {
     width: 100%;
     display: flex;
@@ -199,10 +235,16 @@ export default {
     justify-content: flex-end;
     align-items: center;
   }
-  input, select {
+
+  input {
     height: 40px;
     border-radius: 4px;
   }
+
+  .select-wrapper {
+    margin: 0 4px 0 0;
+  }
+
   input[type=submit] {
     background: #a61111;
     outline: none;
@@ -210,6 +252,7 @@ export default {
     border: none;
     box-sizing: content-box;
     cursor: pointer;
+    padding: 0 16px;
   }
   .task-info {
     display: flex;
@@ -218,6 +261,7 @@ export default {
     align-items: center;
     font-family: 'Open Sans', sans-serif;
     margin-bottom: 24px;
+    width: 100%;
   }
   .limits {
     display: flex;
@@ -289,10 +333,8 @@ export default {
      justify-content: flex-start;
      align-items: center;
      width: 100%;
-
    }
    .attempt {
-     cursor: pointer;
      border-bottom: solid 1px #b5b5b5;
      width: calc(100% - 32px);
      display: flex;
@@ -302,5 +344,35 @@ export default {
    }
    .attempt div, .attemts-top div {
       width: 20%;
+   }
+   .examples {
+     display: flex;
+     flex-direction: row;
+     justify-content: space-between;
+     width: 100%;
+     align-items: stretch;
+   }
+   .example {
+     width: calc(50% - 32px);
+     box-sizing: border-box;
+     display: flex;
+     padding-top: 16px;
+     flex-direction: column;
+     justify-content: center;
+   }
+   .example textarea {
+     font-family: 'Open Sans', sans-serif;
+     box-sizing: border-box;
+     resize: vertical;
+     width: 100%;
+     min-height: 60px;
+     max-width: 100%;
+     min-width: 100%;
+     background: #d2d2d2;
+     border-radius: 4px;
+     border: none;
+     padding: 8px;
+     cursor: default;
+     flex-grow: 1;
    }
 </style>

@@ -21,5 +21,7 @@ export default {
 <style scoped>
    footer {
      font-family: 'Open Sans', sans-serif;
+     padding: 16px;
+     box-sizing: border-box;
    }
 </style>
