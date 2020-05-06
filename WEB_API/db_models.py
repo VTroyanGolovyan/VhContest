@@ -12,8 +12,23 @@ class User(db.Model):
     password = db.Column(db.String(300), unique=False, nullable=False)
     salt = db.Column(db.String(10), unique=False, nullable=False)
 
+    def get_dict(self):
+        res = {
+            'id': self.id,
+            'name': self.name,
+            'last_name': self.last_name,
+            'patronymic': self.patronymic,
+            'email': self.email,
+            'password': self.password,
+            'salt': self.salt
+        }
+        return res
+
     def __repr__(self):
-        return 'ih'
+        return json.dumps(self.get_dict())
+
+    def __str__(self):
+        return json.dumps(self.get_dict())
 
 
 class Task(db.Model):
@@ -113,3 +128,25 @@ class Sending(db.Model):
             'memory': self.memory
         }
         return json.dumps(res)
+
+
+class Session(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user = db.Column(db.Integer, unique=False)
+    token = db.Column(db.String(400), unique=False)
+    refresh_token = db.Column(db.String(400), unique=False)
+
+    def get_dict(self):
+        res = {
+            'id': self.id,
+            'user': self.user,
+            'token': self.token,
+            'refresh_token': self.refresh_token
+        }
+        return res
+
+    def __repr__(self):
+        return json.dumps(self.get_dict())
+
+    def __str__(self):
+        return json.dumps(self.get_dict())
