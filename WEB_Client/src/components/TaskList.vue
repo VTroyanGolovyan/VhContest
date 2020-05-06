@@ -45,8 +45,13 @@ export default {
   },
   methods: {
     fetchTasks: function () {
+      alert(localStorage.getItem('token'))
       axios
-        .get(this.$baseLink + '/' + 'task_list')
+        .get(
+          this.$baseLink + '/' +
+          localStorage.getItem('token') +
+          '/' + 'task_list'
+        )
         .then(response => {
           this.tasks = response.data.data
         })

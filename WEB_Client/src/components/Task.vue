@@ -149,7 +149,11 @@ export default {
   methods: {
     fetchTask: function () {
       axios
-        .get(this.$baseLink + '/' + 'task/' + this.$route.params.id)
+        .get(
+          this.$baseLink + '/' +
+          localStorage.getItem('token') + '/' +
+          'task/' + this.$route.params.id
+        )
         .then(response => {
           this.task = response.data.data
         })

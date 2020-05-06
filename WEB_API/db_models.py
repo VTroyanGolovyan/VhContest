@@ -4,7 +4,7 @@ import json
 
 class User(db.Model):
     __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100), unique=False, nullable=False)
     last_name = db.Column(db.String(100), unique=False, nullable=False)
     patronymic = db.Column(db.String(100), unique=False, nullable=False)
@@ -33,7 +33,7 @@ class User(db.Model):
 
 class Task(db.Model):
     __tablename__ = 'tasks'
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(300), unique=False)
     condition = db.Column(db.Text, unique=False)
     input_example = db.Column(db.Text, unique=False)
@@ -84,7 +84,7 @@ class Test(db.Model):
 
 class TestResult(db.Model):
     __tablename__ = 'tests_results'
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     sending_id = db.Column(db.Integer, unique=False)
     test_id = db.Column(db.Integer, unique=False)
     output = db.Column(db.String(20), unique=False)
@@ -95,7 +95,7 @@ class TestResult(db.Model):
 
 class Sending(db.Model):
     __tablename__ = 'sendings'
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     type = db.Column(db.Integer, unique=False)
     user_id = db.Column(db.Integer, unique=False)
     task_id = db.Column(db.Integer, unique=False)
@@ -131,7 +131,8 @@ class Sending(db.Model):
 
 
 class Session(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    __tablename__ = 'sessions'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user = db.Column(db.Integer, unique=False)
     token = db.Column(db.String(400), unique=False)
     refresh_token = db.Column(db.String(400), unique=False)

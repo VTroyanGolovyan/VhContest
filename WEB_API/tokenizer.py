@@ -1,5 +1,8 @@
 import hashlib
+import random
+import string
 
+import time
 # local salt param
 local_salt = 'VHcontest-the-best!'
 
@@ -9,6 +12,7 @@ def get_hash(password, salt):
     return hashlib.sha512(hash_str.encode('utf-8')).hexdigest()
 
 
-def compareHashes(first, second):
-    print(hashlib.sha512(first.encode('utf-8')).hexdigest())
-    print(hashlib.sha512(second.encode('utf-8')).hexdigest())
+def generate_token(n):
+    chars = list(string.ascii_uppercase + string.digits)
+    token = ''.join(random.choice(chars) for i in range(n)) + str(time.time())
+    return hashlib.sha512(token.encode('utf-8')).hexdigest()

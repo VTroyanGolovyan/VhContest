@@ -39,10 +39,19 @@ def sign_in():
                     'refresh_token': ''
                 })
             else:
+                token = tokenizer.generate_token(100)
+                refresh_token = tokenizer.generate_token(100)
+                print(token)
+                db.session.add(Session(
+                    user=user_data['id'],
+                    token=token,
+                    refresh_token=refresh_token
+                ))
+                db.session.commit()
                 return json.dumps({
                     'status': '0',
-                    'token': 'test',
-                    'refresh_token': 'test'
+                    'token': token,
+                    'refresh_token': refresh_token
                 })
         else:
             return json.dumps({
@@ -64,8 +73,8 @@ def sign_out():
     return ''
 
 
-@app.route('/task_list', methods=['GET', 'OPTIONS'])
-def task_list():
+@app.route('/<token>/task_list', methods=['GET', 'OPTIONS'])
+def task_list(token):
     tasks = db.session.query(Task).all()
     return json.dumps({
         'status': '0',
@@ -73,8 +82,8 @@ def task_list():
     })
 
 
-@app.route('/task/<id>', methods=['GET', 'OPTIONS'])
-def task(id):
+@app.route('/<token>/task/<id>', methods=['GET', 'OPTIONS'])
+def task(token, id):
     task = db.session.query(Task).get(id)
     return json.dumps({
         'status': '0',

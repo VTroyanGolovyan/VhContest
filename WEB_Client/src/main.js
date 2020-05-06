@@ -8,8 +8,6 @@ import router from './router'
 Vue.config.productionTip = false
 
 Vue.prototype.$baseLink = 'http://localhost:5000';
-Vue.prototype.$token = '';
-Vue.prototype.$refreshToken = '';
 
 /* eslint-disable no-new */
 new Vue({
