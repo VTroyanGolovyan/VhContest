@@ -2,8 +2,8 @@ import hashlib
 import random
 import string
 import time
-
-from db_models import User
+import json
+from db_models import Session
 
 # local salt param
 local_salt = 'VHcontest-the-best!'
@@ -21,4 +21,6 @@ def generate_token(n):
 
 
 def get_user(db, token):
+    session = db.session.query(Session).filter_by(token=token).first()
+    print(json.loads(str(session)))
     return None
