@@ -84,6 +84,7 @@ def task_list(token):
 
 @app.route('/<token>/task/<id>', methods=['GET', 'OPTIONS'])
 def task(token, id):
+    user = tokenizer.get_user(db, token)
     task = db.session.query(Task).get(id)
     return json.dumps({
         'status': '0',

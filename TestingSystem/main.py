@@ -3,7 +3,10 @@ from testing_thread import TestingThread
 from socket import *
 
 tcp_socket = socket(AF_INET, SOCK_STREAM)
-tcp_socket.bind((gethostbyname('localhost'), 65500))
+tcp_socket.bind(
+    (gethostbyname(CONFIG['ServerHost']),
+     CONFIG['ServerPort'])
+)
 tcp_socket.listen(100)
 
 while True:
