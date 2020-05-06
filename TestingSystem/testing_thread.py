@@ -3,6 +3,7 @@ from runners import RunningSettings
 from testers import *
 import pymysql
 import subprocess
+import os
 
 # {0} - directory, {1} - path
 languageSettings = {
@@ -50,10 +51,11 @@ class TestingThread(Thread):
         self.CONFIG = CONFIG
         self.connect = connect
         self.db = pymysql.connect(
-            'localhost',
-            'root',
-            'root',
-            'VHcontest'
+            host=self.CONFIG['DBHost'],
+            db=self.CONFIG['DBName'],
+            user=self.CONFIG['DBUser'],
+            password=self.CONFIG['DBPassword'],
+            charset='utf8'
         )
 
     def run(self):
@@ -66,9 +68,9 @@ class TestingThread(Thread):
 
         language = sendingData[5]
 
-        testingPath = self.CONFIG['TestingDirectory'] + '1/'
+        testingPath = self.CONFIG['TestingDirectory'] + str(sendingId) + '/'
+        os.mkdir(testingPath)
         sourceFile = testingPath + 'Main.' + languageSettings[language].fileEnd
-        print(languageSettings[language].runningType)
 
         f = open(sourceFile, 'w')
         f.write(sendingData[4])
@@ -85,7 +87,6 @@ class TestingThread(Thread):
                 executable='/bin/bash'
             )
             output, error = process.communicate()
-            print(output.decode('utf-8'), error.decode('utf-8'))
             if error.decode('utf-8') != '':
                 self.saveResults(sendingId, 'CE', 0, 0)
                 self.db.close()

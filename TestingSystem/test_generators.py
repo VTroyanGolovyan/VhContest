@@ -29,11 +29,7 @@ class CompilingTestGenerator(TestGenerator):
 
     def createRunner(self):
         return CompilerRunner(
-            self.runningSettings,
-            self.CONFIG['ControllerBinPath'],
-            -1,
-            -1,
-            -1
+            self.runningSettings
         )
 
 
@@ -51,11 +47,7 @@ class InterpretingTestGenerator(TestGenerator):
 
     def createRunner(self):
         return InterpreterRunner(
-            self.runningSettings,
-            self.CONFIG['ControllerBinPath'],
-            -1,
-            -1,
-            -1
+            self.runningSettings
         )
 
 
@@ -73,9 +65,5 @@ class SomeAverageTestGenerator(TestGenerator):
 
     def createRunner(self):
         return SomeAverageRunner(
-            self.runningSettings,
-            self.CONFIG['ControllerBinPath'],
-            -1,
-            -1,
-            -1
+            self.runningSettings
         )

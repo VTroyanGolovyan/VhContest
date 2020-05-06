@@ -82,7 +82,7 @@ def check():
         db.session.add(sending)
         db.session.commit()
         # send info to testing server
-        check = CheckAdapter('localhost', 6666)
+        check = CheckAdapter('localhost', 65500)
         check.say_server(1, sending.id)
         return ''
     else:
