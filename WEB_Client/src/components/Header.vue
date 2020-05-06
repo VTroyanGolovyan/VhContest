@@ -21,14 +21,17 @@ export default {
   },
   methods: {
     signOut: function () {
-      localStorage.removeItem('token')
-      localStorage.removeItem('refreshToken')
       axios
-        .get(this.$baseLink + '/sign/out')
+        .get(
+          this.$baseLink + '/' +
+          localStorage.getItem('token') +
+          '/sign/out'
+        )
         .then(response => {
-
+          localStorage.removeItem('token')
+          localStorage.removeItem('refreshToken')
+          this.$router.push('/')
         })
-      this.$router.push('/')
     }
   },
   mounted () {

@@ -68,58 +68,77 @@ def sign_up():
     return ''
 
 
-@app.route('/sign/out')
-def sign_out():
+@app.route('/<token>/sign/out')
+def sign_out(token):
+    user = tokenizer.get_user(db, token)
+    if user:
+        session = db.session.query(Session).filter_by(token=token).first()
+        db.session.delete(session)
+        db.session.commit()
     return ''
 
 
 @app.route('/<token>/task_list', methods=['GET', 'OPTIONS'])
 def task_list(token):
-    tasks = db.session.query(Task).all()
-    return json.dumps({
-        'status': '0',
-        'data': [json.loads(str(t)) for t in tasks]
-    })
+    user = tokenizer.get_user(db, token)
+    if user:
+        tokenizer.get_user(db, token)
+        tasks = db.session.query(Task).all()
+        return json.dumps({
+            'status': '0',
+            'data': [json.loads(str(t)) for t in tasks]
+        })
+    else:
+        return json.dumps({
+            'status': '403',
+            'data': ''
+        })
 
 
 @app.route('/<token>/task/<id>', methods=['GET', 'OPTIONS'])
 def task(token, id):
     user = tokenizer.get_user(db, token)
-    task = db.session.query(Task).get(id)
-    return json.dumps({
-        'status': '0',
-        'data': json.loads(str(task))
-    })
-
-
-@app.route('/check', methods=['POST', 'OPTIONS'])
-def check():
-    if request.method == 'POST':
-        data = json.loads(request.data)
-        print(data)
-        sending = Sending(
-            type=1,
-            user_id=1,
-            task_id=data['task_id'],
-            code=data['solution'],
-            language=data['language'],
-            result='P',
-            time=0,
-            memory=0
-        )
-        db.session.add(sending)
-        db.session.commit()
-        # send info to testing server
-        check = CheckAdapter('localhost', 65500)
-        check.say_server(1, sending.id)
-        return ''
+    if user:
+        task = db.session.query(Task).get(id)
+        return json.dumps({
+            'status': '0',
+            'data': json.loads(str(task))
+        })
     else:
-        return ''
+        return json.dumps({
+            'status': '403',
+            'data': ''
+        })
 
 
-@app.route('/attempts/<id>', methods=['GET', 'OPTIONS'])
-def attempts(id):
-    attempts = db.session.query(Sending).filter_by(task_id=id).all()
+@app.route('/<token>/check', methods=['POST', 'OPTIONS'])
+def check(token):
+    user = tokenizer.get_user(db, token)
+    if user:
+        if request.method == 'POST':
+            data = json.loads(request.data)
+            print(data)
+            sending = Sending(
+                type=1,
+                user_id=user,
+                task_id=data['task_id'],
+                code=data['solution'],
+                language=data['language'],
+                result='P',
+                time=0,
+                memory=0
+            )
+            db.session.add(sending)
+            db.session.commit()
+            # send info to testing server
+            check = CheckAdapter('localhost', 65500)
+            check.say_server(1, sending.id)
+    return ''
+
+
+@app.route('/<token>/attempts/<task_id>', methods=['GET', 'OPTIONS'])
+def attempts(token, task_id):
+    attempts = db.session.query(Sending).filter_by(task_id=task_id).all()
     db.session.close()
     return json.dumps({
         'status': '0',
