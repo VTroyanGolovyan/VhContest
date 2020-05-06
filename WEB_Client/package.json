@@ -1,7 +1,7 @@
 {
-  "name": "web_client",
+  "name": "VHcontest",
   "version": "1.0.0",
-  "description": "web client",
+  "description": "VHcontest",
   "author": "Vladislav <vladislavhacker111@gmail.com>",
   "private": true,
   "scripts": {

@@ -1,48 +1,8 @@
 from threading import Thread
-from runners import RunningSettings
 from testers import *
 import pymysql
 import subprocess
 import os
-
-# {0} - directory, {1} - path
-languageSettings = {
-    'c++': RunningSettings(
-        0,
-        'g++ {1} -o {0}Main',
-        'cd {0}; ./Main',
-        '',
-        'cpp'
-    ),
-    'python': RunningSettings(
-        1,
-        '',
-        'python3 {1}',
-        '',
-        'py'
-    ),
-    'javascript': RunningSettings(
-        1,
-        '',
-        'node {1}',
-        '',
-        'js'
-    ),
-    'php': RunningSettings(
-        1,
-        '',
-        'php {1}',
-        '',
-        'php'
-    ),
-    'java': RunningSettings(
-        2,
-        'cd {0}; javac Main.java',
-        'cd {0}; java Main',
-        '',
-        'java'
-    )
-}
 
 
 class TestingThread(Thread):
@@ -59,6 +19,7 @@ class TestingThread(Thread):
         )
 
     def run(self):
+        languageSettings = self.CONFIG['languages']
         sending = self.connect.recv(256).decode('utf-8')
         sendingArray = sending.split(' ')
         sendingId = sendingArray[2]
@@ -137,7 +98,7 @@ class TestingThread(Thread):
             return int(res[7]) // 1000, int(res[8])
 
     def createTester(self, language):
-        global languageSettings
+        languageSettings = self.CONFIG['languages']
         if languageSettings[language].runningType == 0:
             return CompilingTester(
                 self.CONFIG,
