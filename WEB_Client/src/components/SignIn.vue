@@ -33,10 +33,6 @@ export default {
         .then(response => {
           switch (parseInt(response.data.status)) {
             case 0:
-              /* Make it global for all components */
-              this.$token = response.data.token
-              alert(this.$token)
-              this.$refreshToken = response.data.refreshToken
               /* Save to localStorage */
               localStorage.token = response.data.token
               localStorage.refreshToken = response.data.refreshToken
