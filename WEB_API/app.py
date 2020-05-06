@@ -133,17 +133,29 @@ def check(token):
             # send info to testing server
             check = CheckAdapter('localhost', 65500)
             check.say_server(1, sending.id)
-    return ''
+            return json.dumps({
+                'status': '0',
+            })
+    return json.dumps({
+        'status': '403',
+    })
 
 
 @app.route('/<token>/attempts/<task_id>', methods=['GET', 'OPTIONS'])
 def attempts(token, task_id):
-    attempts = db.session.query(Sending).filter_by(task_id=task_id).all()
-    db.session.close()
-    return json.dumps({
-        'status': '0',
-        'data': [json.loads(str(attempt)) for attempt in attempts]
-    })
+    user = tokenizer.get_user(db, token)
+    if user:
+        attempts = db.session.query(Sending).filter_by(task_id=task_id).all()
+        db.session.close()
+        return json.dumps({
+            'status': '0',
+            'data': [json.loads(str(attempt)) for attempt in attempts]
+        })
+    else:
+        return json.dumps({
+            'status': '403',
+            'data': ''
+        })
 
 
 if __name__ == '__main__':

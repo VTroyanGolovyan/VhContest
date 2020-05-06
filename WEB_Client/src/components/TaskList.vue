@@ -52,7 +52,11 @@ export default {
           '/' + 'task_list'
         )
         .then(response => {
-          this.tasks = response.data.data
+          if (response.data.status === '0') {
+            this.tasks = response.data.data
+          } else {
+            this.$router.push('/')
+          }
         })
     }
   },

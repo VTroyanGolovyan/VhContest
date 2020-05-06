@@ -53,9 +53,19 @@ export default {
   mounted () {
     /* checks if we were signed in */
     if (localStorage.token && localStorage.refreshToken) {
-      this.$token = localStorage.token
-      this.$refreshToken = localStorage.refreshToken
-      this.$router.push('/TaskList')
+      axios
+        .get(
+          this.$baseLink + '/' +
+          localStorage.getItem('token') +
+          '/' + 'task_list'
+        )
+        .then(response => {
+          if (response.data.status === '0') {
+            this.$token = localStorage.token
+            this.$refreshToken = localStorage.refreshToken
+            this.$router.push('/TaskList')
+          }
+        })
     }
   }
 }

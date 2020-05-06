@@ -155,14 +155,26 @@ export default {
           'task/' + this.$route.params.id
         )
         .then(response => {
-          this.task = response.data.data
+          if (response.data.status === '0') {
+            this.task = response.data.data
+          } else {
+            this.$router.push('/TaskList')
+          }
         })
     },
     fetchAttempts: function () {
       axios
-        .get(this.$baseLink + '/' + 'attempts/' + this.$route.params.id)
+        .get(
+          this.$baseLink + '/' +
+          localStorage.getItem('token') + '/' +
+          'attempts/' + this.$route.params.id
+        )
         .then(response => {
-          this.attempts = response.data.data.reverse()
+          if (response.data.status === '0') {
+            this.attempts = response.data.data.reverse()
+          } else {
+            this.$router.push('/TaskList')
+          }
         })
     },
     changeTheme: function () {
@@ -183,11 +195,14 @@ export default {
     },
     submitSolution: function () {
       axios
-        .post(this.$baseLink + '/check', {
-          task_id: this.$route.params.id,
-          language: this.language,
-          solution: this.solution
-        })
+        .post(
+          this.$baseLink + '/' + localStorage.token + '/check',
+          {
+            task_id: this.$route.params.id,
+            language: this.language,
+            solution: this.solution
+          }
+        )
         .then(response => {})
     }
   },
@@ -203,7 +218,7 @@ export default {
     })
     this.interval = setInterval(() => {
       this.fetchAttempts()
-    }, 1000)
+    }, 4000)
   },
   beforeDestroy () {
     clearInterval(this.interval)
