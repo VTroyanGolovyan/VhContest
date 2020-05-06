@@ -3,6 +3,7 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 
 from check_solution_adapter import CheckAdapter
+import tokenizer
 
 app = Flask(__name__)
 # Allow cross domain
@@ -26,12 +27,29 @@ def home():
 @app.route('/sign/in', methods=['POST', 'OPTIONS'])
 def sign_in():
     if request.method == 'POST':
-        print(request.data)
-        return json.dumps({
-            'status': '0',
-            'token': 'test',
-            'refresh_token': 'test'
-        })
+        form_data = json.loads(request.data.decode('utf-8'))
+        user = db.session.query(User).filter_by(email=form_data['email']).all()
+        if len(user) != 0:
+            user_data = json.loads(str(user[0]))
+            pass_hash = tokenizer.get_hash(form_data['password'], user_data['salt'])
+            if pass_hash != user_data['password']:
+                return json.dumps({
+                    'status': '2',
+                    'token': '',
+                    'refresh_token': ''
+                })
+            else:
+                return json.dumps({
+                    'status': '0',
+                    'token': 'test',
+                    'refresh_token': 'test'
+                })
+        else:
+            return json.dumps({
+                'status': '1',
+                'token': '',
+                'refresh_token': ''
+            })
     else:
         return ''
 

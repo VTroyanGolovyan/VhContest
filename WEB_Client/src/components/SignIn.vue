@@ -107,6 +107,10 @@ export default {
 
    .signin form .submit-input {
      display: flex;
+     flex-direction: row;
+     justify-content: center;
+     align-items: center;
+     border-radius: 4px;
      border: solid 2px #a61111;
      box-sizing: content-box;
      background: #a61111;
@@ -127,6 +131,11 @@ export default {
    }
 
    a {
+     font-family: 'Open Sans', sans-serif;
+   }
+
+   .error {
+     color:  #a61111;
      font-family: 'Open Sans', sans-serif;
    }
 </style>
