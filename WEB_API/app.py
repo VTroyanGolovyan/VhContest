@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 from check_solution_adapter import CheckAdapter
 import tokenizer
+import html
 
 app = Flask(__name__)
 # Allow cross domain
@@ -63,12 +64,57 @@ def sign_in():
         return ''
 
 
-@app.route('/sign/up')
+@app.route('/sign/up', methods=['POST', 'OPTIONS'])
 def sign_up():
-    return ''
+    if request.method == 'POST':
+        form_data = json.loads(request.data.decode('utf-8'))
+        if len(form_data['password']) < 8:
+            return json.dumps({
+                'status': '3'
+            })
+        if form_data['password'].upper() == form_data['password']:
+            return json.dumps({
+                'status': '4'
+            })
+        print(form_data['password'])
+        if len(set(form_data['password'])) < 5:
+            return json.dumps({
+                'status': '5'
+            })
+        if len(set(form_data['password']).intersection({'1', '2', '3', '4', '5', '6', '7', '8', '9'})) == 0:
+            return json.dumps({
+                'status': '6'
+            })
+        if form_data['check_password'] == form_data['password']:
+            user = db.session.query(User).filter_by(email=form_data['email']).all()
+            salt = tokenizer.gen_salt(10)
+            if len(user) == 0:
+                user = User(
+                    name=html.escape(form_data['name']),
+                    last_name=html.escape(form_data['last_name']),
+                    patronymic=html.escape(form_data['patronymic']),
+                    email=html.escape(form_data['email']),
+                    password=tokenizer.get_hash(form_data['password'], salt),
+                    salt=salt
+                )
+                db.session.add(user)
+                db.session.commit()
+                return json.dumps({
+                    'status': '0'
+                })
+            else:
+                return json.dumps({
+                    'status': '2'
+                })
+        else:
+            return json.dumps({
+                'status': '1'
+            })
+    else:
+        return ''
 
 
-@app.route('/<token>/sign/out')
+@app.route('/<token>/sign/out', methods=['GET', 'OPTIONS'])
 def sign_out(token):
     user = tokenizer.get_user(db, token)
     if user:
@@ -145,11 +191,31 @@ def check(token):
 def attempts(token, task_id):
     user = tokenizer.get_user(db, token)
     if user:
-        attempts = db.session.query(Sending).filter_by(task_id=task_id).all()
+        attempts = db.session.query(Sending).filter_by(
+            user_id=user,
+            task_id=task_id
+        ).all()
         db.session.close()
         return json.dumps({
             'status': '0',
             'data': [json.loads(str(attempt)) for attempt in attempts]
+        })
+    else:
+        return json.dumps({
+            'status': '403',
+            'data': ''
+        })
+
+
+@app.route('/<token>/users_list', methods=['GET', 'OPTIONS'])
+def users_list(token):
+    user = tokenizer.get_user(db, token)
+    if user:
+        users = db.session.query(User).all()
+        db.session.close()
+        return json.dumps({
+            'status': '0',
+            'data': [json.loads(str(user.get_public())) for user in users]
         })
     else:
         return json.dumps({

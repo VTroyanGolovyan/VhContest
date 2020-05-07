@@ -24,6 +24,15 @@ class User(db.Model):
         }
         return res
 
+    def get_public(self):
+        res = {
+            'id': self.id,
+            'name': self.name,
+            'last_name': self.last_name,
+            'patronymic': self.patronymic
+        }
+        return json.dumps(res)
+
     def __repr__(self):
         return json.dumps(self.get_dict())
 

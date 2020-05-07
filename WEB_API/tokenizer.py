@@ -9,6 +9,11 @@ from db_models import Session
 local_salt = 'VHcontest-the-best!'
 
 
+def gen_salt(n):
+    chars = list(string.ascii_uppercase + string.digits)
+    return ''.join(random.choice(chars) for i in range(n))
+
+
 def get_hash(password, salt):
     hash_str = password + salt + local_salt
     return hashlib.sha512(hash_str.encode('utf-8')).hexdigest()
