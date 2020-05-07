@@ -3,15 +3,14 @@
     <h2>VHcontest</h2>
     <form v-on:submit="sendData">
       <input class="submit-text" v-model="name" type="text" placeholder="Имя">
-      <input class="submit-text" v-model="lastName" type="text" placeholder="Фамилия">
-      <input class="submit-text" v-model="name" type="text" placeholder="Отчество">
-      <input class="submit-text" v-model="name" type="text" placeholder="Имя">
+      <input class="submit-text" v-model="last_name" type="text" placeholder="Фамилия">
+      <input class="submit-text" v-model="patronymic" type="text" placeholder="Отчество">
       <input class="submit-text" v-model="email" type="email" placeholder="Почта">
       <input class="submit-text" v-model="password" type="password" placeholder="Пароль">
-      <input class="submit-text" v-model="checkPassword" type="password" placeholder="Повторите пароль">
-      <label>
+      <input class="submit-text" v-model="check_password" type="password" placeholder="Повторите пароль">
+      <label class="submit-checkbox">
         Соглашаюсь поставить Владу отл. 10
-        <input type="checkbox">
+        <input v-model="otl" type="checkbox" required>
       </label>
       <input class="submit-input" type="submit" value="Зарегистрироваться">
       <div class="error" v-if="error != ''">
@@ -28,11 +27,11 @@ export default {
   data () {
     return {
       name: '',
-      lastName: '',
+      last_name: '',
       patronymic: '',
       email: '',
       password: '',
-      checkPassword: '',
+      check_password: '',
       error: ''
     }
   },
@@ -40,39 +39,54 @@ export default {
     sendData: function () {
       axios
         .post(this.$baseLink + '/sign/up', {
+          name: this.name,
+          last_name: this.last_name,
+          patronymic: this.patronymic,
           email: this.email,
-          password: this.password
+          password: this.password,
+          check_password: this.check_password
         })
         .then(response => {
           switch (parseInt(response.data.status)) {
             case 0:
-              /* Make it global for all components */
-              this.$token = response.data.token
-              this.$refreshToken = response.data.refreshToken
-              /* Save to localStorage */
-              localStorage.token = response.data.token
-              localStorage.refreshToken = response.data.refreshToken
-              /* Refresh to the tasks list */
-              this.$router.push('/TaskList')
-              break
+                this.error = ''
+              break;
             case 1:
-              this.error = 'Wrong email'
+                this.error = 'Пароли не совпадают'
               break
             case 2:
-              this.error = 'Wrong password'
+                this.error = 'Почта занята'
               break
-            default:
+            case 3:
+                this.error = 'Короткий пароль'
+              break
+            case 4:
+                this.error = 'В пароле должны быть и большие и маленькие символы'
+              break
+            case 5:
+                this.error = 'Пароль должен содержать минимум 5 уникальных символов'
+              break
+            case 6:
+                this.error = 'В пароле должны быть цифры'
+              break
+          }
+        }).then(() => {
+          if (this.error == '') {
+            axios
+              .post(this.$baseLink + '/sign/in', {
+                email: this.email,
+                password: this.password
+              })
+              .then(response => {
+                localStorage.token = response.data.token
+                localStorage.refreshToken = response.data.refreshToken
+                this.$router.push('/')
+              })
           }
         })
     }
   },
   mounted () {
-    /* checks if we were signed in */
-    if (localStorage.token && localStorage.refreshToken) {
-      this.$token = localStorage.token
-      this.$refreshToken = localStorage.refreshToken
-      this.$router.push('/TaskList')
-    }
   }
 }
 </script>
@@ -134,12 +148,37 @@ export default {
      border-bottom: solid 2px #a61111;
    }
 
+   .submit-checkbox {
+     display: flex;
+     flex-direction: row;
+     justify-content: center;
+     align-items: center;
+     width: 100%;
+     margin-bottom: 32px;
+     font-family: 'Open Sans', sans-serif;
+     cursor: pointer;
+   }
+
+   .submit-checkbox input[type=checkbox] {
+     width: auto;
+     height: auto;
+     margin: 0;
+     padding: 0;
+     margin-left: 16px;
+     cursor: pointer;
+   }
+
    .signin form .submit-input:hover {
      background: white;
      color: #a61111;
    }
 
    a {
+     font-family: 'Open Sans', sans-serif;
+   }
+
+   .error {
+     color:  #a61111;
      font-family: 'Open Sans', sans-serif;
    }
 </style>

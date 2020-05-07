@@ -2,8 +2,8 @@
   <div class="signin">
     <h2>VHcontest</h2>
     <form v-on:submit="sendData">
-      <input class="submit-text" v-model="email" type="email" placeholder="email">
-      <input class="submit-text" v-model="password" type="password" placeholder="password">
+      <input class="submit-text" v-model="email" type="email" placeholder="email" required>
+      <input class="submit-text" v-model="password" type="password" placeholder="password" required>
       <input class="submit-input" type="submit" value="Войти">
       <div class="error" v-if="error != ''">
         {{error}}
