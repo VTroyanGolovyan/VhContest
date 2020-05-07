@@ -4,9 +4,12 @@ from process_monitor import ProcessMonitor
 
 
 def preexecCallback(cpu, memory, childs):
+    # rlimit cpu works in seconds
+    if cpu - int(cpu) > 0:
+        cpu += 1
+
     def limiter():
         resource.setrlimit(resource.RLIMIT_CPU, (cpu, cpu))
-        pass
     return limiter
 
 
@@ -45,13 +48,13 @@ class BaseRunner:
             stderr=subprocess.PIPE,
             shell=True,
             executable='/bin/bash',
-            preexec_fn=preexecCallback(timeout + 0.5, 1, 0)
+            preexec_fn=preexecCallback(timeout + 0.1, 1, 0)
         )
         monitor = ProcessMonitor(process)
         monitor.start()
         process.stdin.write(testStdin.encode('utf-8'))
         try:
-            output, error = process.communicate(timeout=(timeout + 0.5))
+            output, error = process.communicate(timeout=(timeout + 0.1))
             print(monitor.cpu, timeout)
             if memory < monitor.rss // 1024 // 1024:
                 return output, error, 'ML', monitor.rss, monitor.cpu

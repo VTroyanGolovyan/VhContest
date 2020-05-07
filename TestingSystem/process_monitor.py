@@ -21,6 +21,6 @@ class ProcessMonitor(Thread):
                 self.t += 0.05
                 if self.cpu == 0:
                     self.cpu = self.t
-                time.sleep(0.02)
+                time.sleep(0.05)
         except Exception:
             return
