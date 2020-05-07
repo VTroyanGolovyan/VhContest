@@ -218,7 +218,7 @@ export default {
     })
     this.interval = setInterval(() => {
       this.fetchAttempts()
-    }, 4000)
+    }, 1000)
   },
   beforeDestroy () {
     clearInterval(this.interval)
@@ -258,6 +258,10 @@ export default {
   input {
     height: 40px;
     border-radius: 4px;
+  }
+
+  select {
+    cursor: pointer;
   }
 
   .select-wrapper {
