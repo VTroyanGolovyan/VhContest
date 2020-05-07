@@ -22,7 +22,7 @@ class Tester:
         result = self.runner.runProgram(
             testingPath,
             sourceFile,
-            test[2],
+            test['input'],
             timout,
             memory
         )
@@ -31,7 +31,7 @@ class Tester:
         timeUsage = result[4]
         if result[2] != 'NL':
             return result[2], memUsage, timeUsage
-        if result[0].decode('utf-8').strip() == test[3]:
+        if result[0].decode('utf-8').strip() == test['output']:
             return 'OK', memUsage, timeUsage
         else:
             return 'WA', memUsage, timeUsage

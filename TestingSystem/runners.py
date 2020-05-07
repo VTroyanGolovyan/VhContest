@@ -55,7 +55,7 @@ class BaseRunner:
         process.stdin.write(testStdin.encode('utf-8'))
         try:
             output, error = process.communicate(timeout=(timeout + 0.1))
-            print(monitor.cpu, timeout)
+            print(error)
             if memory < monitor.rss // 1024 // 1024:
                 return output, error, 'ML', monitor.rss, monitor.cpu
             if error.decode('utf-8') != '':
@@ -66,8 +66,7 @@ class BaseRunner:
         except subprocess.TimeoutExpired:
             process.kill()
             output, error = process.communicate()
-            print(error)
-            return output, error, 'TL', monitor.rss, monitor.cpu
+            return output, error, 'TL', monitor.rss, timeout
         except Exception:
             return '', '', 'RE', monitor.rss, monitor.cpu
 

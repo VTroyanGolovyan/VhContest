@@ -212,6 +212,25 @@ def users_list(token):
             'data': ''
         })
 
+@app.route('/<token>/attempts/<attempt_id>', methods=['GET', 'OPTIONS'])
+def attempt(token, attempt_id):
+    user = tokenizer.get_user(db, token)
+    if user:
+        attempts = db.session.query(Sending).filter_by(
+            user_id=user,
+            task_id=task_id
+        ).all()
+        db.session.commit()
+        return json.dumps({
+            'status': '0',
+            'data': [json.loads(str(attempt)) for attempt in attempts]
+        })
+    else:
+        return json.dumps({
+            'status': '403',
+            'data': ''
+        })
+
 
 if __name__ == '__main__':
     app.run()

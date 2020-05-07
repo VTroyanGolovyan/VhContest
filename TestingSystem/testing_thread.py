@@ -27,14 +27,14 @@ class TestingThread(Thread):
 
         sendingData = self.getSendingData(sendingId)
 
-        language = sendingData[5]
+        language = sendingData['language']
 
         testingPath = self.CONFIG['TestingDirectory'] + str(sendingId) + '/'
         os.mkdir(testingPath)
         sourceFile = testingPath + 'Main.' + languageSettings[language].fileEnd
 
         f = open(sourceFile, 'w')
-        f.write(sendingData[4])
+        f.write(sendingData['code'])
         f.close()
 
         if languageSettings[language].runningType in [0, 2]:
@@ -55,11 +55,11 @@ class TestingThread(Thread):
 
         res = 'OK'
 
-        timeout, memLimit = self.getLimits(sendingData[3])
+        timeout, memLimit = self.getLimits(sendingData['task_id'])
         maxTime = 0
         maxMem = 0
         tester = self.createTester(language)
-        for test in self.getTests(sendingData[3]):
+        for test in self.getTests(sendingData['task_id']):
             res = tester.runSolutionTesting(testingPath, sourceFile, test, timeout, memLimit)
             maxTime = max(maxTime, res[2])
             maxMem = max(maxMem, res[1])
@@ -69,14 +69,14 @@ class TestingThread(Thread):
         self.db.close()
 
     def getSendingData(self, sendingId):
-        with self.db as db:
-            db.execute("SELECT * FROM `sendings` WHERE `id`={0}".format(sendingId))
-            rows = db.fetchall()
+        with self.db.cursor(pymysql.cursors.DictCursor) as cursor:
+            cursor.execute("SELECT * FROM `sendings` WHERE `id`={0}".format(sendingId))
+            rows = cursor.fetchall()
             return rows[0]
 
     def saveResults(self, sendingId, result, maxTime, maxMem):
-        with self.db as db:
-            db.execute(
+        with self.db.cursor() as cursor:
+            cursor.execute(
                 "UPDATE `sendings` SET `result`='{1}', `time`='{2}', `memory`='{3}'  WHERE `id`={0}".format(
                     sendingId,
                     result[0],
@@ -87,15 +87,15 @@ class TestingThread(Thread):
         self.db.commit()
 
     def getTests(self, taskId):
-        with self.db as db:
-            db.execute("SELECT * FROM `tests` WHERE `task_id`={0}".format(taskId))
-            return db.fetchall()
+        with self.db.cursor(pymysql.cursors.DictCursor) as cursor:
+            cursor.execute("SELECT * FROM `tests` WHERE `task_id`={0}".format(taskId))
+            return cursor.fetchall()
 
     def getLimits(self, taskId):
         with self.db as db:
-            db.execute("SELECT * FROM `tasks` WHERE `id`={0}".format(taskId))
+            db.execute("SELECT `time_limit`, `memory_limit` FROM `tasks` WHERE `id`={0}".format(taskId))
             res = db.fetchall()[0]
-            return int(res[7]) // 1000, int(res[8])
+            return int(res[0]) // 1000, int(res[1])
 
     def createTester(self, language):
         languageSettings = self.CONFIG['languages']

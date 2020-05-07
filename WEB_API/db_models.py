@@ -97,7 +97,7 @@ class TestResult(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     sending_id = db.Column(db.Integer, unique=False)
     test_id = db.Column(db.Integer, unique=False)
-    output = db.Column(db.String(20), unique=False)
+    result = db.Column(db.String(20), unique=False)
 
     def __repr__(self):
         pass

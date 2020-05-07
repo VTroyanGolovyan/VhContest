@@ -6,7 +6,7 @@
       </div>
       <nav>
         <router-link to="/TaskList">Aрхив</router-link>
-        <router-link to="/Users">Люди</router-link>
+        <router-link to="/Users">Пользователи</router-link>
         <div v-on:click="signOut">Выйти</div>
       </nav>
     </header>
