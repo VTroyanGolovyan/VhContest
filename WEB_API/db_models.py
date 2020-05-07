@@ -29,7 +29,8 @@ class User(db.Model):
             'id': self.id,
             'name': self.name,
             'last_name': self.last_name,
-            'patronymic': self.patronymic
+            'patronymic': self.patronymic,
+            'email': self.email
         }
         return json.dumps(res)
 

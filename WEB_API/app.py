@@ -68,22 +68,11 @@ def sign_in():
 def sign_up():
     if request.method == 'POST':
         form_data = json.loads(request.data.decode('utf-8'))
-        if len(form_data['password']) < 8:
+
+        check_security = tokenizer.check_password_security(form_data['password'])
+        if check_security != '0':
             return json.dumps({
-                'status': '3'
-            })
-        if form_data['password'].upper() == form_data['password']:
-            return json.dumps({
-                'status': '4'
-            })
-        print(form_data['password'])
-        if len(set(form_data['password'])) < 5:
-            return json.dumps({
-                'status': '5'
-            })
-        if len(set(form_data['password']).intersection({'1', '2', '3', '4', '5', '6', '7', '8', '9'})) == 0:
-            return json.dumps({
-                'status': '6'
+                    'status': check_security
             })
         if form_data['check_password'] == form_data['password']:
             user = db.session.query(User).filter_by(email=form_data['email']).all()

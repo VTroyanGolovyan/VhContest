@@ -9,6 +9,18 @@ from db_models import Session
 local_salt = 'VHcontest-the-best!'
 
 
+def check_password_security(password):
+    if len(password) < 8:
+        return  '3'
+    if password.upper() == password:
+        return '4'
+    if len(set(password)) < 5:
+        return '5'
+    if len(set(password).intersection({'1', '2', '3', '4', '5', '6', '7', '8', '9'})) == 0:
+        return '6'
+    return '0'
+
+
 def gen_salt(n):
     chars = list(string.ascii_uppercase + string.digits)
     return ''.join(random.choice(chars) for i in range(n))
