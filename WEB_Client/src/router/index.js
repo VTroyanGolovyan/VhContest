@@ -4,6 +4,7 @@ import SignIn from '@/components/SignIn'
 import SignUp from '@/components/SignUp'
 import TaskList from '@/components/TaskList'
 import Task from '@/components/Task'
+import Users from '@/components/Users'
 
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
@@ -34,6 +35,11 @@ export default new Router({
       path: '/Task/:id',
       name: 'Task',
       component: Task
+    },
+    {
+      path: '/Users',
+      name: 'Users',
+      component: Users
     }
   ]
 })
