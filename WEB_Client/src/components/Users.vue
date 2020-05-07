@@ -15,6 +15,9 @@
         <div>
           Отчество
         </div>
+        <div>
+          Почта
+        </div>
       </div>
       <div class="item" v-for="user in users" v-bind:key="user.id">
         <div>
@@ -28,6 +31,9 @@
         </div>
         <div>
           {{ user.patronymic }}
+        </div>
+        <div>
+          {{ user.email }}
         </div>
       </div>
     </section>
@@ -88,7 +94,9 @@ export default {
   }
 
   .item div, .list-header div {
-      width: 25%;
+      width: 20%;
+      overflow: hidden;
+      text-overflow: ellipsis;
   }
 
   .list-header {

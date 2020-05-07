@@ -49,29 +49,29 @@ export default {
         .then(response => {
           switch (parseInt(response.data.status)) {
             case 0:
-                this.error = ''
-              break;
+              this.error = ''
+              break
             case 1:
-                this.error = 'Пароли не совпадают'
+              this.error = 'Пароли не совпадают'
               break
             case 2:
-                this.error = 'Почта занята'
+              this.error = 'Почта занята'
               break
             case 3:
-                this.error = 'Короткий пароль'
+              this.error = 'Короткий пароль'
               break
             case 4:
-                this.error = 'В пароле должны быть и большие и маленькие символы'
+              this.error = 'В пароле должны быть и большие и маленькие символы'
               break
             case 5:
-                this.error = 'Пароль должен содержать минимум 5 уникальных символов'
+              this.error = 'Пароль должен содержать минимум 5 уникальных символов'
               break
             case 6:
-                this.error = 'В пароле должны быть цифры'
+              this.error = 'В пароле должны быть цифры'
               break
           }
         }).then(() => {
-          if (this.error == '') {
+          if (this.error === '') {
             axios
               .post(this.$baseLink + '/sign/in', {
                 email: this.email,
