@@ -42,7 +42,6 @@ def sign_in():
             else:
                 token = tokenizer.generate_token(100)
                 refresh_token = tokenizer.generate_token(100)
-                print(token)
                 db.session.add(Session(
                     user=user_data['id'],
                     token=token,
@@ -119,6 +118,7 @@ def task_list(token):
     if user:
         tokenizer.get_user(db, token)
         tasks = db.session.query(Task).all()
+        db.session.commit()
         return json.dumps({
             'status': '0',
             'data': [json.loads(str(t)) for t in tasks]
@@ -135,6 +135,7 @@ def task(token, id):
     user = tokenizer.get_user(db, token)
     if user:
         task = db.session.query(Task).get(id)
+        db.session.commit()
         return json.dumps({
             'status': '0',
             'data': json.loads(str(task))
@@ -152,7 +153,6 @@ def check(token):
     if user:
         if request.method == 'POST':
             data = json.loads(request.data)
-            print(data)
             sending = Sending(
                 type=1,
                 user_id=user,
@@ -184,7 +184,7 @@ def attempts(token, task_id):
             user_id=user,
             task_id=task_id
         ).all()
-        db.session.close()
+        db.session.commit()
         return json.dumps({
             'status': '0',
             'data': [json.loads(str(attempt)) for attempt in attempts]
@@ -201,7 +201,7 @@ def users_list(token):
     user = tokenizer.get_user(db, token)
     if user:
         users = db.session.query(User).all()
-        db.session.close()
+        db.session.commit()
         return json.dumps({
             'status': '0',
             'data': [json.loads(str(user.get_public())) for user in users]

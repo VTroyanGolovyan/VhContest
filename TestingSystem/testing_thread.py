@@ -38,7 +38,7 @@ class TestingThread(Thread):
         f.close()
 
         if languageSettings[language].runningType in [0, 2]:
-            print(languageSettings[language].compilerBash.format(testingPath, sourceFile))
+
             process = subprocess.Popen(
                 languageSettings[language].compilerBash.format(testingPath, sourceFile),
                 stdin=subprocess.PIPE,

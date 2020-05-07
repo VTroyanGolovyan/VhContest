@@ -39,7 +39,8 @@ def generate_token(n):
 
 def get_user(db, token):
     session = db.session.query(Session).filter_by(token=token).first()
+    db.session.close()
     if session:
         data = json.loads(str(session))
-        return data['user']
+        return int(data['user'])
     return None

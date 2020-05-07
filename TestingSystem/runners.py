@@ -3,9 +3,10 @@ import resource
 from process_monitor import ProcessMonitor
 
 
-def preexecCallback(time, memory, childs):
+def preexecCallback(cpu, memory, childs):
     def limiter():
-        resource.setrlimit(resource.RLIMIT_CPU, (time, time))
+        resource.setrlimit(resource.RLIMIT_CPU, (cpu, cpu))
+        pass
     return limiter
 
 
@@ -44,23 +45,25 @@ class BaseRunner:
             stderr=subprocess.PIPE,
             shell=True,
             executable='/bin/bash',
-            preexec_fn=preexecCallback(timeout + 0.02, 1, 0)
+            preexec_fn=preexecCallback(timeout + 0.5, 1, 0)
         )
-        print(process.pid)
         monitor = ProcessMonitor(process)
         monitor.start()
         process.stdin.write(testStdin.encode('utf-8'))
         try:
-            output, error = process.communicate(timeout=(timeout + 0.1))
+            output, error = process.communicate(timeout=(timeout + 0.5))
+            print(monitor.cpu, timeout)
             if memory < monitor.rss // 1024 // 1024:
                 return output, error, 'ML', monitor.rss, monitor.cpu
             if error.decode('utf-8') != '':
-                print(error.decode('utf-8'))
+                if monitor.cpu >= timeout:
+                    return output, error, 'TL', monitor.rss, timeout
                 return output, error, 'RE', monitor.rss, monitor.cpu
             return output, error, 'NL', monitor.rss, monitor.cpu
         except subprocess.TimeoutExpired:
             process.kill()
             output, error = process.communicate()
+            print(error)
             return output, error, 'TL', monitor.rss, monitor.cpu
         except Exception:
             return '', '', 'RE', monitor.rss, monitor.cpu
