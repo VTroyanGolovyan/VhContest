@@ -98,7 +98,7 @@
             Результат
           </div>
         </div>
-        <div class="attempt" v-for="attempt in attempts" v-bind:key="attempt.id">
+        <router-link tag="div" :to="{ name: 'Attempt', params: { id: attempt.id }}" class="attempt" v-for="attempt in attempts" v-bind:key="attempt.id">
           <div>{{attempt.id}}</div>
           <div>
             {{attempt.language}}
@@ -110,7 +110,7 @@
             {{attempt.memory}}mb
           </div>
           <div>{{attempt.result}}</div>
-        </div>
+        </router-link>
       </div>
     </section>
     <Footer></Footer>
@@ -172,8 +172,6 @@ export default {
         .then(response => {
           if (response.data.status === '0') {
             this.attempts = response.data.data.reverse()
-          } else {
-            this.$router.push('/TaskList')
           }
         })
     },

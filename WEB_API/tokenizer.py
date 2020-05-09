@@ -11,7 +11,7 @@ local_salt = 'VHcontest-the-best!'
 
 def check_password_security(password):
     if len(password) < 8:
-        return  '3'
+        return '3'
     if password.upper() == password:
         return '4'
     if len(set(password)) < 5:
@@ -39,7 +39,7 @@ def generate_token(n):
 
 def get_user(db, token):
     session = db.session.query(Session).filter_by(token=token).first()
-    db.session.close()
+    db.session.commit()
     if session:
         data = json.loads(str(session))
         return int(data['user'])

@@ -63,6 +63,7 @@ class TestingThread(Thread):
             res = tester.runSolutionTesting(testingPath, sourceFile, test, timeout, memLimit)
             maxTime = max(maxTime, res[2])
             maxMem = max(maxMem, res[1])
+            self.saveTestResult(sendingId, test['id'], res[0], res[2] * 1000, res[1])
             if res[0] != 'OK':
                 break
         self.saveResults(sendingId, res, maxTime * 1000, maxMem)
@@ -76,12 +77,28 @@ class TestingThread(Thread):
 
     def saveResults(self, sendingId, result, maxTime, maxMem):
         with self.db.cursor() as cursor:
+            query = "UPDATE `sendings` SET `result`='{1}', `time`='{2}', `memory`='{3}'  WHERE `id`='{0}'"
             cursor.execute(
-                "UPDATE `sendings` SET `result`='{1}', `time`='{2}', `memory`='{3}'  WHERE `id`={0}".format(
+                query.format(
                     sendingId,
                     result[0],
                     maxTime,
                     maxMem
+                )
+            )
+        self.db.commit()
+
+    def saveTestResult(self, sending_id, test_id, result, time, memory):
+        with self.db.cursor() as cursor:
+            query = "INSERT INTO `tests_result` (`sending_id`, `test_id`, `time`, `memory`, `result`) \
+                     VALUES ('{0}', '{1}', '{2}','{3}','{4}')"
+            cursor.execute(
+                query.format(
+                    sending_id,
+                    test_id,
+                    time,
+                    memory,
+                    result
                 )
             )
         self.db.commit()

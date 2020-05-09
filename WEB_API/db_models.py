@@ -93,14 +93,30 @@ class Test(db.Model):
 
 
 class TestResult(db.Model):
-    __tablename__ = 'tests_results'
+    __tablename__ = 'tests_result'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     sending_id = db.Column(db.Integer, unique=False)
     test_id = db.Column(db.Integer, unique=False)
+    time = db.Column(db.Integer, unique=False)
+    memory = db.Column(db.Integer, unique=False)
     result = db.Column(db.String(20), unique=False)
 
+    def get_dict(self):
+        res = {
+            'id': self.id,
+            'sending_id': self.sending_id,
+            'test_id': self.test_id,
+            'time': self.time,
+            'memory': self.memory,
+            'result': self.result
+        }
+        return res
+
     def __repr__(self):
-        pass
+        return json.dumps(self.get_dict())
+
+    def __str__(self):
+        return json.dumps(self.get_dict())
 
 
 class Sending(db.Model):

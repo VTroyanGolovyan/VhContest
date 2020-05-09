@@ -2,6 +2,7 @@ from flask import Flask, request
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 
+
 from check_solution_adapter import CheckAdapter
 import tokenizer
 import html
@@ -30,6 +31,7 @@ def sign_in():
     if request.method == 'POST':
         form_data = json.loads(request.data.decode('utf-8'))
         user = db.session.query(User).filter_by(email=form_data['email']).all()
+        db.session.commit()
         if len(user) != 0:
             user_data = json.loads(str(user[0]))
             pass_hash = tokenizer.get_hash(form_data['password'], user_data['salt'])
@@ -67,14 +69,14 @@ def sign_in():
 def sign_up():
     if request.method == 'POST':
         form_data = json.loads(request.data.decode('utf-8'))
-
         check_security = tokenizer.check_password_security(form_data['password'])
         if check_security != '0':
             return json.dumps({
-                    'status': check_security
+                'status': check_security
             })
         if form_data['check_password'] == form_data['password']:
             user = db.session.query(User).filter_by(email=form_data['email']).all()
+            db.session.commit()
             salt = tokenizer.gen_salt(10)
             if len(user) == 0:
                 user = User(
@@ -212,18 +214,19 @@ def users_list(token):
             'data': ''
         })
 
-@app.route('/<token>/attempts/<attempt_id>', methods=['GET', 'OPTIONS'])
+
+@app.route('/<token>/attempt/<attempt_id>', methods=['GET', 'OPTIONS'])
 def attempt(token, attempt_id):
     user = tokenizer.get_user(db, token)
+
     if user:
-        attempts = db.session.query(Sending).filter_by(
-            user_id=user,
-            task_id=task_id
+        tests = db.session.query(TestResult).filter_by(
+            sending_id=attempt_id
         ).all()
         db.session.commit()
         return json.dumps({
             'status': '0',
-            'data': [json.loads(str(attempt)) for attempt in attempts]
+            'data': [json.loads(str(test)) for test in tests]
         })
     else:
         return json.dumps({

@@ -5,6 +5,7 @@ import SignUp from '@/components/SignUp'
 import TaskList from '@/components/TaskList'
 import Task from '@/components/Task'
 import Users from '@/components/Users'
+import Attempt from '@/components/Attempt'
 
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
@@ -35,6 +36,11 @@ export default new Router({
       path: '/Task/:id',
       name: 'Task',
       component: Task
+    },
+    {
+      path: '/Attempt/:id',
+      name: 'Attempt',
+      component: Attempt
     },
     {
       path: '/Users',
